@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using ServiceStack.CacheAccess.Providers.Tests.Models;
-using ServiceStack.Common.Extensions;
+using ServiceStack.Common;
 using ServiceStack.Common.Support;
 using ServiceStack.ServiceModel.Serialization;
 

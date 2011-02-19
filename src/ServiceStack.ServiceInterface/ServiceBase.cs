@@ -108,6 +108,13 @@ namespace ServiceStack.ServiceInterface
 			return string.Format("[{0}: {1}]:\n[REQUEST: {2}]", GetType().Name, DateTime.UtcNow, requestString);
 		}
 
+		protected T TryResolve<T>()
+		{
+			return AppHostBase.Instance == null
+				? default(T)
+				: AppHostBase.Instance.Container.TryResolve<T>();
+		}
+
 		/// <summary>
 		/// Single method sub classes should implement to execute the request
 		/// </summary>
@@ -197,13 +204,6 @@ namespace ServiceStack.ServiceInterface
 			return new HttpResult(responseDto, null, HttpStatusCode.InternalServerError);
 		}
 
-		protected T TryResolve<T>()
-		{
-			return AppHostBase.Instance == null
-				? default(T)
-				: AppHostBase.Instance.Container.TryResolve<T>();
-		}
-
 		/// <summary>
 		/// Create an instance of the service response dto type and inject it with the supplied responseStatus
 		/// </summary>
@@ -267,7 +267,6 @@ namespace ServiceStack.ServiceInterface
 		{
 			return typeof(TRequest).FullName + ResponseDtoSuffix;
 		}
-
 	}
 
 }
