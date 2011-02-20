@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Security.Policy;
 using System.Text;
 using Funq;
+using ServiceStack.Common;
 using ServiceStack.Common.Web;
 using ServiceStack.Service;
+using ServiceStack.ServiceClient.Web;
 using ServiceStack.ServiceHost;
+using ServiceStack.ServiceInterface.ServiceModel;
 using ServiceStack.ServiceModel;
 using ServiceStack.Text;
 using ServiceStack.WebHost.Endpoints;
@@ -17,6 +21,39 @@ namespace ServiceStack.ServiceInterface.Testing
 {
 	public abstract class TestsBase
 	{
+		public class TestAppHost : IAppHost
+		{
+			private readonly TestsBase testsBase;
+
+			public TestAppHost(TestsBase testsBase)
+			{
+				this.testsBase = testsBase;
+				this.Config = EndpointHost.Config = new EndpointHostConfig
+				{
+					ServiceName = GetType().Name,
+					ServiceManager = new ServiceManager(true, testsBase.ServiceAssemblies),
+				};
+				this.ContentTypeFilters = new HttpResponseFilter();
+				this.RequestFilters = new List<Action<IHttpRequest, IHttpResponse, object>>();
+				this.ResponseFilters = new List<Action<IHttpRequest, IHttpResponse, object>>();
+			}
+
+			public T TryResolve<T>()
+			{
+				return this.testsBase.Container.TryResolve<T>();
+			}
+
+			public IContentTypeFilter ContentTypeFilters { get; set; }
+
+			public List<Action<IHttpRequest, IHttpResponse, object>> RequestFilters { get; set; }
+
+			public List<Action<IHttpRequest, IHttpResponse, object>> ResponseFilters { get; set; }
+
+			public EndpointHostConfig Config { get; set; }
+		}
+
+		protected IAppHost AppHost { get; set; }
+
 		protected TestsBase(params Assembly[] serviceAssemblies)
 			: this(null, serviceAssemblies)
 		{
@@ -27,11 +64,9 @@ namespace ServiceStack.ServiceInterface.Testing
 			ServiceClientBaseUri = serviceClientBaseUri;
 			ServiceAssemblies = serviceAssemblies;
 
-			EndpointHost.Config = new EndpointHostConfig
-			{
-				ServiceName = GetType().Name,
-				ServiceManager = new ServiceManager(true, ServiceAssemblies),
-			};
+			this.AppHost = new TestAppHost(this);
+
+			EndpointHost.ConfigureHost(this.AppHost);
 		}
 
 		protected Container Container
@@ -78,7 +113,7 @@ namespace ServiceStack.ServiceInterface.Testing
 				throw new NotImplementedException();
 			}
 
-			public void SendAsync<TResponse>(object request, 
+			public void SendAsync<TResponse>(object request,
 				Action<TResponse> onSuccess, Action<TResponse, Exception> onError)
 			{
 				throw new NotImplementedException();
@@ -177,6 +212,35 @@ namespace ServiceStack.ServiceInterface.Testing
 
 			var request = httpHandler.CreateRequest(httpReq, httpHandler.RequestName);
 			var response = httpHandler.GetResponse(httpReq, request);
+
+			var httpRes = response as IHttpResult;
+			if (httpRes != null)
+			{
+				var httpError = httpRes as IHttpError;
+				if (httpError != null)
+				{
+					throw new WebServiceException(httpError.Message)
+					{
+						StatusCode = (int)httpError.StatusCode,
+						ResponseDto = httpError.Response
+					};
+				}
+				var hasResponseStatus = httpRes.Response as IHasResponseStatus;
+				if (hasResponseStatus != null)
+				{
+					var status = hasResponseStatus.ResponseStatus;
+					if (status != null && !status.ErrorCode.IsNullOrEmpty())
+					{
+						throw new WebServiceException(status.Message)
+						{
+							StatusCode = (int)HttpStatusCode.InternalServerError,
+							ResponseDto = httpRes.Response,
+						};
+					}
+				}
+
+				return httpRes.Response;
+			}
 
 			return response;
 		}

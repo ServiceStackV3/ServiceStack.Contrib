@@ -39,14 +39,6 @@ namespace ServiceStack.ServiceInterface.ServiceModel
 		public string ErrorCode { get; set; }
 
 		/// <summary>
-		/// Not sent over the wire but makes client code more readable when checking for errors.
-		/// </summary>
-		public bool IsSuccess
-		{
-			get { return this.ErrorCode == null; }
-		}
-
-		/// <summary>
 		/// A human friendly error message
 		/// </summary>
 		[DataMember]

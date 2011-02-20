@@ -117,6 +117,7 @@
     <Compile Include="ServiceBase.cs" />
     <Compile Include="ServiceModel\CollectionTypes.cs" />
     <Compile Include="ServiceModel\IHasResponseStatus.cs" />
+    <Compile Include="ServiceModel\Property.cs" />
     <Compile Include="ServiceModel\ResponseError.cs" />
     <Compile Include="ServiceModel\ResponseStatus.cs" />
     <Compile Include="ServiceModel\ResponseStatusTranslator.cs" />

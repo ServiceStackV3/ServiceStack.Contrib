@@ -22,10 +22,11 @@ namespace ServiceStack.ServiceInterface.Testing
 			this.ContentType = contentType;
 			this.ResponseContentType = contentType;
 			this.PathInfo = pathInfo;
-			this.QueryString = queryString;
-			this.FormData = formData;
 			this.InputStream = inputStream;
-			this.Cookies = new Dictionary<string, Cookie>();
+			this.QueryString = queryString;
+			this.FormData = formData ?? new NameValueCollection();
+			this.Headers = new NameValueCollection();
+			this.Cookies = new Dictionary<string, Cookie>();			
 			this.Items = new Dictionary<string, object>();
 		}
 
