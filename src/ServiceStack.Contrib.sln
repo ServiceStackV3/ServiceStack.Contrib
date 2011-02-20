@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.ServiceInterfa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Memcached", "ServiceStack.CacheAccess.Memcached\ServiceStack.CacheAccess.Memcached.csproj", "{600612F3-15B4-45B5-9D39-06FA016B81C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Providers", "ServiceStack.CacheAccess.Providers\ServiceStack.CacheAccess.Providers.csproj", "{3F22FE6E-7E15-4561-8BC7-2CABF37B46CE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Compression", "ServiceStack.Compression\ServiceStack.Compression.csproj", "{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Memcached.Tests", "..\tests\ServiceStack.CacheAccess.Memcached.Tests\ServiceStack.CacheAccess.Memcached.Tests.csproj", "{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}"
@@ -33,10 +31,6 @@ Global
 		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F22FE6E-7E15-4561-8BC7-2CABF37B46CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F22FE6E-7E15-4561-8BC7-2CABF37B46CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F22FE6E-7E15-4561-8BC7-2CABF37B46CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F22FE6E-7E15-4561-8BC7-2CABF37B46CE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -147,7 +147,6 @@
     <Compile Include="MemcachedClientTests.cs" />
     <Compile Include="MemoryCacheClientTests.cs" />
     <Compile Include="Models\ModelWithFieldsOfDifferentTypes.cs" />
-    <Compile Include="OrmLitePersistenceProviderCacheTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlCacheManagerTests.cs" />
   </ItemGroup>
@@ -163,10 +162,6 @@
     <ProjectReference Include="..\..\src\ServiceStack.CacheAccess.Memcached\ServiceStack.CacheAccess.Memcached.csproj">
       <Project>{600612F3-15B4-45B5-9D39-06FA016B81C9}</Project>
       <Name>ServiceStack.CacheAccess.Memcached</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\ServiceStack.CacheAccess.Providers\ServiceStack.CacheAccess.Providers.csproj">
-      <Project>{3F22FE6E-7E15-4561-8BC7-2CABF37B46CE}</Project>
-      <Name>ServiceStack.CacheAccess.Providers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\ServiceStack.Compression\ServiceStack.Compression.csproj">
       <Project>{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}</Project>
