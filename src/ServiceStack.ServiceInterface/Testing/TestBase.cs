@@ -66,7 +66,7 @@ namespace ServiceStack.ServiceInterface.Testing
 
 			this.AppHost = new TestAppHost(this);
 
-			EndpointHost.ConfigureHost(this.AppHost);
+			EndpointHost.ConfigureHost(this.AppHost, "TestBase", serviceAssemblies);
 		}
 
 		protected Container Container
