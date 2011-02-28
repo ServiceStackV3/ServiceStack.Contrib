@@ -27,6 +27,8 @@ namespace ServiceStack.ServiceInterface.Testing
 
 			public TestAppHost(TestsBase testsBase)
 			{
+				var createInstance = EndpointHostConfig.Instance;
+
 				this.testsBase = testsBase;
 				this.Config = EndpointHost.Config = new EndpointHostConfig
 				{
