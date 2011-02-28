@@ -110,9 +110,9 @@ namespace ServiceStack.ServiceInterface
 
 		protected T TryResolve<T>()
 		{
-			return AppHostBase.Instance == null
+			return this.AppHost == null
 				? default(T)
-				: AppHostBase.Instance.Container.TryResolve<T>();
+				: this.AppHost.TryResolve<T>();
 		}
 
 		/// <summary>
