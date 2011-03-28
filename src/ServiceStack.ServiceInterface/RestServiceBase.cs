@@ -24,6 +24,7 @@ namespace ServiceStack.ServiceInterface
 		{
 			try
 			{
+				OnBeforeExecute(request);
 				return OnGet(request);
 			}
 			catch (Exception ex)
@@ -41,6 +42,7 @@ namespace ServiceStack.ServiceInterface
 		{
 			try
 			{
+				OnBeforeExecute(request);
 				return OnPut(request);
 			}
 			catch (Exception ex)
@@ -58,6 +60,7 @@ namespace ServiceStack.ServiceInterface
 		{
 			try
 			{
+				OnBeforeExecute(request);
 				return OnPost(request);
 			}
 			catch (Exception ex)
@@ -75,6 +78,7 @@ namespace ServiceStack.ServiceInterface
 		{
 			try
 			{
+				OnBeforeExecute(request);
 				return OnDelete(request);
 			}
 			catch (Exception ex)

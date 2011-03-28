@@ -100,7 +100,7 @@ namespace ServiceStack.ServiceInterface
 			{
 				requestString = TypeSerializer.SerializeToString(CurrentRequestDto);
 			}
-			catch (Exception ignoreSerializationException)
+			catch /*(Exception ignoreSerializationException)*/
 			{
 				//Serializing request successfully is not critical and only provides added error info
 			}
@@ -123,6 +123,12 @@ namespace ServiceStack.ServiceInterface
 		protected abstract object Run(TRequest request);
 
 		/// <summary>
+		/// Called before the request is Executed. Override to enforce generic validation logic.
+		/// </summary>
+		/// <param name="request"></param>
+		protected virtual void OnBeforeExecute(TRequest request) { }
+
+		/// <summary>
 		/// Execute the request with the protected abstract Run() method in a managed scope by
 		/// provide default handling of Service Exceptions by serializing exceptions in the response
 		/// DTO and maintaining all service errors in a managed service-specific and combined rolling error logs
@@ -133,7 +139,7 @@ namespace ServiceStack.ServiceInterface
 		{
 			try
 			{
-				//Run the request in a managed scope serializing all 
+				OnBeforeExecute(request);
 				return Run(request);
 			}
 			catch (Exception ex)
