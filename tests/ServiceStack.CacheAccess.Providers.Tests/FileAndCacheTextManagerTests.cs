@@ -39,7 +39,7 @@ namespace ServiceStack.CacheAccess.Providers.Tests
 					Directory.Delete(appDataPath, true);
 					Directory.CreateDirectory(appDataPath);
 				}
-				catch (Exception ignore) {} 
+				catch /*(Exception ignore)*/ {} 
 			}
 		}
 
