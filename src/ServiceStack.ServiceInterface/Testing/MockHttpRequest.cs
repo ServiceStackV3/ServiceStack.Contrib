@@ -90,5 +90,7 @@ namespace ServiceStack.ServiceInterface.Testing
 		}
 
 		public IFile[] Files { get; set; }
+
+		public string ApplicationFilePath { get; set; }
 	}
 }

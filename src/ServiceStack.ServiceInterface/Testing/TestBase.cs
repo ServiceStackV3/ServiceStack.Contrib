@@ -121,6 +121,11 @@ namespace ServiceStack.ServiceInterface.Testing
 				throw new NotImplementedException();
 			}
 
+			public void SetCredentials(string userName, string password)
+			{
+				throw new NotImplementedException();
+			}
+
 			public void GetAsync<TResponse>(string relativeOrAbsoluteUrl, Action<TResponse> onSuccess, Action<TResponse, Exception> onError)
 			{
 				throw new NotImplementedException();
@@ -286,7 +291,7 @@ namespace ServiceStack.ServiceInterface.Testing
 
 		private static EndpointHandlerBase GetHandler(string httpMethod, string pathInfo)
 		{
-			var httpHandler = ServiceStackHttpHandlerFactory.GetHandlerForPathInfo(httpMethod, pathInfo) as EndpointHandlerBase;
+			var httpHandler = ServiceStackHttpHandlerFactory.GetHandlerForPathInfo(httpMethod, pathInfo, null) as EndpointHandlerBase;
 			if (httpHandler == null)
 				throw new NotSupportedException(pathInfo);
 			return httpHandler;

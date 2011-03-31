@@ -33,8 +33,8 @@ using System.Runtime.Serialization;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.*")]
+//[assembly: AssemblyFileVersion("1.0.0.0")]
 
 //Default DataContract namespace instead of tempuri.org
 //Note: doesn't work for ilmerged assemblies

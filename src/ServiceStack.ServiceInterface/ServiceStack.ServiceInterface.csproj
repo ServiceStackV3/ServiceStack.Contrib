@@ -128,6 +128,7 @@
     <Compile Include="Session\UserClientSession.cs" />
     <Compile Include="Session\PublicAndPrivateClientSessions.cs" />
     <Compile Include="Session\UserSession.cs" />
+    <Compile Include="Testing\BasicAppHost.cs" />
     <Compile Include="Testing\MockHttpRequest.cs">
       <SubType>Code</SubType>
     </Compile>
