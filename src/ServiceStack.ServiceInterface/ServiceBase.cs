@@ -58,11 +58,16 @@ namespace ServiceStack.ServiceInterface
 		/// <summary>
 		/// Access to the Applications ServiceStack AppHost Instance
 		/// </summary>
+		private IAppHost appHost;
 		public virtual IAppHost AppHost
 		{
 			get
 			{
-				return EndpointHost.AppHost;
+				return appHost ?? EndpointHost.AppHost;
+			}
+			set
+			{
+				this.appHost = value;
 			}
 		}
 
