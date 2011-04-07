@@ -57,9 +57,7 @@ namespace ServiceStack.ServiceInterface.Testing
 		protected IAppHost AppHost { get; set; }
 
 		protected TestsBase(params Assembly[] serviceAssemblies)
-			: this(null, serviceAssemblies)
-		{
-		}
+			: this(null, serviceAssemblies) {}
 
 		protected TestsBase(string serviceClientBaseUri, params Assembly[] serviceAssemblies)
 		{
