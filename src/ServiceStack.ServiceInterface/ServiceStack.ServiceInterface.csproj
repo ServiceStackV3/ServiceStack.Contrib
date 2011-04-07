@@ -74,8 +74,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ServiceStack, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ServiceStack">
       <HintPath>..\..\lib\ServiceStack.dll</HintPath>
     </Reference>
     <Reference Include="ServiceStack.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

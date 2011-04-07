@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Security.Policy;
 using System.Text;
-using Funq;
 using ServiceStack.Common;
+using ServiceStack.Common.Utils;
 using ServiceStack.Common.Web;
 using ServiceStack.Service;
 using ServiceStack.ServiceClient.Web;
@@ -30,8 +29,7 @@ namespace ServiceStack.ServiceInterface.Testing
 				var createInstance = EndpointHostConfig.Instance;
 
 				this.testsBase = testsBase;
-				this.Config = EndpointHost.Config = new EndpointHostConfig
-				{
+				this.Config = EndpointHost.Config = new EndpointHostConfig {
 					ServiceName = GetType().Name,
 					ServiceManager = new ServiceManager(true, testsBase.ServiceAssemblies),
 				};
@@ -71,7 +69,7 @@ namespace ServiceStack.ServiceInterface.Testing
 			EndpointHost.ConfigureHost(this.AppHost, "TestBase", serviceAssemblies);
 		}
 
-		protected Container Container
+		protected Funq.Container Container
 		{
 			get { return EndpointHost.ServiceManager.Container; }
 		}
@@ -87,15 +85,27 @@ namespace ServiceStack.ServiceInterface.Testing
 
 		protected virtual IServiceClient CreateNewServiceClient()
 		{
-			return new DirectServiceClient(EndpointHost.ServiceManager);
+			return new DirectServiceClient(this, EndpointHost.ServiceManager);
 		}
 
-		public class DirectServiceClient : IServiceClient
+		protected virtual IRestClient CreateNewRestClient()
 		{
+			return new DirectServiceClient(this, EndpointHost.ServiceManager);
+		}
+
+		protected virtual IRestClientAsync CreateNewRestClientAsync()
+		{
+			return new DirectServiceClient(this, EndpointHost.ServiceManager);
+		}
+
+		public class DirectServiceClient : IServiceClient, IRestClient
+		{
+			private readonly TestsBase parent;
 			ServiceManager ServiceManager { get; set; }
 
-			public DirectServiceClient(ServiceManager serviceManager)
+			public DirectServiceClient(TestsBase parent, ServiceManager serviceManager)
 			{
+				this.parent = parent;
 				this.ServiceManager = serviceManager;
 			}
 
@@ -110,6 +120,26 @@ namespace ServiceStack.ServiceInterface.Testing
 				return (TResponse)response;
 			}
 
+			public TResponse Get<TResponse>(string relativeOrAbsoluteUrl)
+			{
+				return parent.ExecutePath<TResponse>(HttpMethod.Get, new UrlParts(relativeOrAbsoluteUrl), null);
+			}
+
+			public TResponse Delete<TResponse>(string relativeOrAbsoluteUrl)
+			{
+				return parent.ExecutePath<TResponse>(HttpMethod.Delete, new UrlParts(relativeOrAbsoluteUrl), null);
+			}
+
+			public TResponse Post<TResponse>(string relativeOrAbsoluteUrl, object request)
+			{
+				return parent.ExecutePath<TResponse>(HttpMethod.Post, new UrlParts(relativeOrAbsoluteUrl), request);
+			}
+
+			public TResponse Put<TResponse>(string relativeOrAbsoluteUrl, object request)
+			{
+				return parent.ExecutePath<TResponse>(HttpMethod.Put, new UrlParts(relativeOrAbsoluteUrl), request);
+			}
+
 			public TResponse PostFile<TResponse>(string relativeOrAbsoluteUrl, FileInfo fileToUpload, string mimeType)
 			{
 				throw new NotImplementedException();
@@ -118,7 +148,31 @@ namespace ServiceStack.ServiceInterface.Testing
 			public void SendAsync<TResponse>(object request,
 				Action<TResponse> onSuccess, Action<TResponse, Exception> onError)
 			{
-				throw new NotImplementedException();
+				try
+				{
+					var response = (TResponse)ServiceManager.Execute(request);
+					onSuccess(response);
+				}
+				catch (Exception ex)
+				{
+					HandleException(ex, onError);
+				}
+			}
+
+			private static void HandleException<TResponse>(Exception exception, Action<TResponse, Exception> onError)
+			{
+				var response = (TResponse)ReflectionUtils.CreateInstance(typeof(TResponse));
+				var hasResponseStatus = response as IHasResponseStatus;
+				if (hasResponseStatus != null)
+				{
+					hasResponseStatus.ResponseStatus = new ResponseStatus {
+						ErrorCode = exception.GetType().Name,
+						Message = exception.Message,
+						StackTrace = exception.StackTrace,
+					};
+				}
+				var webServiceEx = new WebServiceException(exception.Message, exception);
+				if (onError != null) onError(response, webServiceEx);
 			}
 
 			public void SetCredentials(string userName, string password)
@@ -128,22 +182,54 @@ namespace ServiceStack.ServiceInterface.Testing
 
 			public void GetAsync<TResponse>(string relativeOrAbsoluteUrl, Action<TResponse> onSuccess, Action<TResponse, Exception> onError)
 			{
-				throw new NotImplementedException();
+				try
+				{
+					var response = parent.ExecutePath<TResponse>(HttpMethod.Get, new UrlParts(relativeOrAbsoluteUrl), default(TResponse));
+					onSuccess(response);
+				}
+				catch (Exception ex)
+				{
+					HandleException(ex, onError);
+				}
 			}
 
 			public void DeleteAsync<TResponse>(string relativeOrAbsoluteUrl, Action<TResponse> onSuccess, Action<TResponse, Exception> onError)
 			{
-				throw new NotImplementedException();
+				try
+				{
+					var response = parent.ExecutePath<TResponse>(HttpMethod.Delete, new UrlParts(relativeOrAbsoluteUrl), default(TResponse));
+					onSuccess(response);
+				}
+				catch (Exception ex)
+				{
+					HandleException(ex, onError);
+				}
 			}
 
 			public void PostAsync<TResponse>(string relativeOrAbsoluteUrl, object request, Action<TResponse> onSuccess, Action<TResponse, Exception> onError)
 			{
-				throw new NotImplementedException();
+				try
+				{
+					var response = parent.ExecutePath<TResponse>(HttpMethod.Post, new UrlParts(relativeOrAbsoluteUrl), request);
+					onSuccess(response);
+				}
+				catch (Exception ex)
+				{
+					HandleException(ex, onError);
+				}
 			}
 
 			public void PutAsync<TResponse>(string relativeOrAbsoluteUrl, object request, Action<TResponse> onSuccess, Action<TResponse, Exception> onError)
 			{
-				throw new NotImplementedException();
+				try
+				{
+					var response = parent.ExecutePath<TResponse>(HttpMethod.Put, new UrlParts(relativeOrAbsoluteUrl), request);
+					onSuccess(response);
+				}
+				catch (Exception ex)
+				{
+					HandleException(ex, onError);
+				}
 			}
 
 			public void Dispose() { }
@@ -185,14 +271,26 @@ namespace ServiceStack.ServiceInterface.Testing
 			return ExecutePath(httpMethod, urlParts.PathInfo, urlParts.QueryString, null, null);
 		}
 
+		private TResponse ExecutePath<TResponse>(string httpMethod, UrlParts urlParts, object requestDto)
+		{
+			return (TResponse)ExecutePath(httpMethod, urlParts.PathInfo, urlParts.QueryString, null, requestDto);
+		}
+
+		public TResponse ExecutePath<TResponse>(string httpMethod, string pathInfo, object requestDto)
+		{
+			var urlParts = new UrlParts(pathInfo);
+			return (TResponse)ExecutePath(httpMethod, urlParts.PathInfo, urlParts.QueryString, null, requestDto);
+		}
+
 		public object ExecutePath<T>(
 			string httpMethod,
 			string pathInfo,
 			Dictionary<string, string> queryString,
 			Dictionary<string, string> formData,
-			T requestBody) where T : class
+			T requestBody)
 		{
-			var json = requestBody != null ? JsonSerializer.SerializeToString(requestBody) : null;
+			var isDefault = Equals(requestBody, default(T));
+			var json = !isDefault ? JsonSerializer.SerializeToString(requestBody) : null;
 			return ExecutePath(httpMethod, pathInfo, queryString, formData, json);
 		}
 
@@ -226,8 +324,7 @@ namespace ServiceStack.ServiceInterface.Testing
 				var httpError = httpRes as IHttpError;
 				if (httpError != null)
 				{
-					throw new WebServiceException(httpError.Message)
-					{
+					throw new WebServiceException(httpError.Message) {
 						StatusCode = (int)httpError.StatusCode,
 						ResponseDto = httpError.Response
 					};
@@ -238,8 +335,7 @@ namespace ServiceStack.ServiceInterface.Testing
 					var status = hasResponseStatus.ResponseStatus;
 					if (status != null && !status.ErrorCode.IsNullOrEmpty())
 					{
-						throw new WebServiceException(status.Message)
-						{
+						throw new WebServiceException(status.Message) {
 							StatusCode = (int)HttpStatusCode.InternalServerError,
 							ResponseDto = httpRes.Response,
 						};
