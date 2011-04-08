@@ -242,7 +242,7 @@ namespace ServiceStack.ServiceInterface.Testing
 		{
 			public UrlParts(string pathInfo)
 			{
-				this.PathInfo = pathInfo;
+				this.PathInfo = pathInfo.UrlDecode();
 				var qsIndex = pathInfo.IndexOf("?");
 				if (qsIndex != -1)
 				{
