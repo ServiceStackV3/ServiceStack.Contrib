@@ -153,7 +153,7 @@ namespace ServiceStack.ServiceInterface
 			}
 		}
 
-		protected object HandleException(TRequest request, Exception ex)
+		protected virtual object HandleException(TRequest request, Exception ex)
 		{
 			var responseStatus = ResponseStatusTranslator.Instance.Parse(ex);
 

@@ -18,20 +18,20 @@ using ServiceStack.WebHost.Endpoints.Support;
 
 namespace ServiceStack.ServiceInterface.Testing
 {
-	public abstract class TestsBase
+	public abstract class TestBase
 	{
 		public class TestAppHost : IAppHost
 		{
-			private readonly TestsBase testsBase;
+			private readonly TestBase testBase;
 
-			public TestAppHost(TestsBase testsBase)
+			public TestAppHost(TestBase testBase)
 			{
 				var createInstance = EndpointHostConfig.Instance;
 
-				this.testsBase = testsBase;
+				this.testBase = testBase;
 				this.Config = EndpointHost.Config = new EndpointHostConfig {
 					ServiceName = GetType().Name,
-					ServiceManager = new ServiceManager(true, testsBase.ServiceAssemblies),
+					ServiceManager = new ServiceManager(true, testBase.ServiceAssemblies),
 				};
 				this.ContentTypeFilters = new HttpResponseFilter();
 				this.RequestFilters = new List<Action<IHttpRequest, IHttpResponse, object>>();
@@ -40,7 +40,7 @@ namespace ServiceStack.ServiceInterface.Testing
 
 			public T TryResolve<T>()
 			{
-				return this.testsBase.Container.TryResolve<T>();
+				return this.testBase.Container.TryResolve<T>();
 			}
 
 			public IContentTypeFilter ContentTypeFilters { get; set; }
@@ -54,10 +54,10 @@ namespace ServiceStack.ServiceInterface.Testing
 
 		protected IAppHost AppHost { get; set; }
 
-		protected TestsBase(params Assembly[] serviceAssemblies)
+		protected TestBase(params Assembly[] serviceAssemblies)
 			: this(null, serviceAssemblies) {}
 
-		protected TestsBase(string serviceClientBaseUri, params Assembly[] serviceAssemblies)
+		protected TestBase(string serviceClientBaseUri, params Assembly[] serviceAssemblies)
 		{
 			ServiceClientBaseUri = serviceClientBaseUri;
 			ServiceAssemblies = serviceAssemblies;
@@ -98,10 +98,10 @@ namespace ServiceStack.ServiceInterface.Testing
 
 		public class DirectServiceClient : IServiceClient, IRestClient
 		{
-			private readonly TestsBase parent;
+			private readonly TestBase parent;
 			ServiceManager ServiceManager { get; set; }
 
-			public DirectServiceClient(TestsBase parent, ServiceManager serviceManager)
+			public DirectServiceClient(TestBase parent, ServiceManager serviceManager)
 			{
 				this.parent = parent;
 				this.ServiceManager = serviceManager;
