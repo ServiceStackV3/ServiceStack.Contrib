@@ -54,6 +54,8 @@ namespace ServiceStack.ServiceInterface.Testing
 
 		protected IAppHost AppHost { get; set; }
 
+		protected bool HasConfigured { get; set; }
+
 		protected TestBase(params Assembly[] serviceAssemblies)
 			: this(null, serviceAssemblies) {}
 
@@ -62,23 +64,47 @@ namespace ServiceStack.ServiceInterface.Testing
 			ServiceClientBaseUri = serviceClientBaseUri;
 			ServiceAssemblies = serviceAssemblies;
 
-			this.AppHost = new TestAppHost(this);
+			var appHost = new TestAppHost(this);
+			this.AppHost = appHost;
 
 			EndpointHost.ConfigureHost(this.AppHost, "TestBase", serviceAssemblies);
+
+			EndpointHost.ServiceManager = appHost.Config.ServiceManager;
 		}
+
+		protected abstract void Configure(Funq.Container container);
 
 		protected Funq.Container Container
 		{
 			get { return EndpointHost.ServiceManager.Container; }
 		}
 
+		protected IServiceRoutes Routes
+		{
+			get { return EndpointHost.ServiceManager.ServiceController.Routes; }
+		}
+
 		//All integration tests call the Webservices hosted at the following location:
 		protected string ServiceClientBaseUri { get; set; }
 		protected Assembly[] ServiceAssemblies { get; set; }
 
+		public virtual void OnBeforeTestFixture()
+		{
+			OnConfigure();
+		}
+
+		protected virtual void OnConfigure()
+		{
+			if (HasConfigured) return;
+
+			HasConfigured = true;
+			Configure(Container);
+			EndpointHost.AfterInit();
+		}
+
 		public virtual void OnBeforeEachTest()
 		{
-			EndpointHost.ServiceManager = new ServiceManager(true, ServiceAssemblies);
+			OnConfigure();
 		}
 
 		protected virtual IServiceClient CreateNewServiceClient()
