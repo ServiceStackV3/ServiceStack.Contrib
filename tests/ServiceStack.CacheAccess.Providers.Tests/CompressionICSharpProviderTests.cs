@@ -12,8 +12,8 @@ namespace ServiceStack.CacheAccess.Providers.Tests
 		[TestFixtureSetUp]
 		public void TestFixtureSetUp()
 		{
-			StreamExtensions.DeflateProvider = new ICSharpDeflateProvider();
-			StreamExtensions.GZipProvider = new ICSharpGZipProvider();
+			StreamExtensions.DeflateProvider = (IDeflateProvider) new ICSharpDeflateProvider();
+			StreamExtensions.GZipProvider = (IGZipProvider) new ICSharpGZipProvider();
 		}
 
 		[Test]
