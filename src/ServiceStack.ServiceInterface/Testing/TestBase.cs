@@ -67,7 +67,7 @@ namespace ServiceStack.ServiceInterface.Testing
 			var appHost = new TestAppHost(this);
 			this.AppHost = appHost;
 
-			EndpointHost.ConfigureHost(this.AppHost, "TestBase", serviceAssemblies);
+			EndpointHost.ConfigureHost(this.AppHost, "TestBase", new ServiceManager(serviceAssemblies));
 
 			EndpointHost.ServiceManager = appHost.Config.ServiceManager;
 		}
