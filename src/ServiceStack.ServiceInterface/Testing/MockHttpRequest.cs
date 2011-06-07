@@ -11,11 +11,16 @@ namespace ServiceStack.ServiceInterface.Testing
 	{
 		public MockHttpRequest()
 		{
+			this.FormData = new NameValueCollection();
+			this.Headers = new NameValueCollection();
+			this.Cookies = new Dictionary<string, Cookie>();
+			this.Items = new Dictionary<string, object>();
 		}
 
 		public MockHttpRequest(string operationName, string httpMethod,
 			string contentType, string pathInfo,
 			NameValueCollection queryString, Stream inputStream, NameValueCollection formData)
+			: this()
 		{
 			this.OperationName = operationName;
 			this.HttpMethod = httpMethod;
@@ -25,9 +30,6 @@ namespace ServiceStack.ServiceInterface.Testing
 			this.InputStream = inputStream;
 			this.QueryString = queryString;
 			this.FormData = formData ?? new NameValueCollection();
-			this.Headers = new NameValueCollection();
-			this.Cookies = new Dictionary<string, Cookie>();			
-			this.Items = new Dictionary<string, object>();
 		}
 
 		public string OperationName { get; set; }

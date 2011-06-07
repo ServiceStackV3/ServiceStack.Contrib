@@ -19,7 +19,7 @@ namespace ServiceStack.CacheAccess.Providers.Tests
 		public void Caches_results_as_string()
 		{
 			var dto = ModelWithFieldsOfDifferentTypes.Create(1);
-			var expectedXml = JsonDataContractSerializer.Instance.Parse(dto);
+			var expectedXml = JsonDataContractSerializer.Instance.SerializeToString(dto);
 
 			var cacheManager = new JsonCacheManager(CreateCacheClient());
 
@@ -45,14 +45,14 @@ namespace ServiceStack.CacheAccess.Providers.Tests
 			var dtoXml = cacheManager.ResolveText(cacheKey, cacheFn);
 
 			var dto1 = JsonDataContractDeserializer.Instance
-				.Parse<ModelWithFieldsOfDifferentTypes>(dtoXml);
+				.DeserializeFromString<ModelWithFieldsOfDifferentTypes>(dtoXml);
 
 			Assert.That(dto1.Id, Is.EqualTo(1));
 
 			dtoXml = cacheManager.ResolveText(cacheKey, cacheFn);
 
 			var dto2 = JsonDataContractDeserializer.Instance
-				.Parse<ModelWithFieldsOfDifferentTypes>(dtoXml);
+				.DeserializeFromString<ModelWithFieldsOfDifferentTypes>(dtoXml);
 
 			Assert.That(dto2.Id, Is.EqualTo(1));
 		}

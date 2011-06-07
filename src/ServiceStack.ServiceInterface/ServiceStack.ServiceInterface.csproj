@@ -126,6 +126,7 @@
     <Compile Include="Testing\MockHttpRequest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Testing\TestAppHost.cs" />
     <Compile Include="Testing\TestBase.cs">
       <SubType>Code</SubType>
     </Compile>

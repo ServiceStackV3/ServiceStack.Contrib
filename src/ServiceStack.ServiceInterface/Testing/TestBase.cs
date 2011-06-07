@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using Funq;
 using ServiceStack.Common;
 using ServiceStack.Common.Utils;
 using ServiceStack.Common.Web;
@@ -20,56 +21,28 @@ namespace ServiceStack.ServiceInterface.Testing
 {
 	public abstract class TestBase
 	{
-		public class TestAppHost : IAppHost
-		{
-			private readonly TestBase testBase;
-
-			public TestAppHost(TestBase testBase)
-			{
-				var createInstance = EndpointHostConfig.Instance;
-
-				this.testBase = testBase;
-				this.Config = EndpointHost.Config = new EndpointHostConfig {
-					ServiceName = GetType().Name,
-					ServiceManager = new ServiceManager(true, testBase.ServiceAssemblies),
-				};
-				this.ContentTypeFilters = new HttpResponseFilter();
-				this.RequestFilters = new List<Action<IHttpRequest, IHttpResponse, object>>();
-				this.ResponseFilters = new List<Action<IHttpRequest, IHttpResponse, object>>();
-			}
-
-			public T TryResolve<T>()
-			{
-				return this.testBase.Container.TryResolve<T>();
-			}
-
-			public IContentTypeFilter ContentTypeFilters { get; set; }
-
-			public List<Action<IHttpRequest, IHttpResponse, object>> RequestFilters { get; set; }
-
-			public List<Action<IHttpRequest, IHttpResponse, object>> ResponseFilters { get; set; }
-
-			public EndpointHostConfig Config { get; set; }
-		}
-
 		protected IAppHost AppHost { get; set; }
 
 		protected bool HasConfigured { get; set; }
 
 		protected TestBase(params Assembly[] serviceAssemblies)
-			: this(null, serviceAssemblies) {}
+			: this(null, serviceAssemblies) { }
 
 		protected TestBase(string serviceClientBaseUri, params Assembly[] serviceAssemblies)
 		{
+			if (serviceAssemblies.Length == 0)
+				serviceAssemblies = new[] { GetType().Assembly };
+
 			ServiceClientBaseUri = serviceClientBaseUri;
 			ServiceAssemblies = serviceAssemblies;
 
-			var appHost = new TestAppHost(this);
-			this.AppHost = appHost;
+			var serviceManager = new ServiceManager(serviceAssemblies);
 
-			EndpointHost.ConfigureHost(this.AppHost, "TestBase", new ServiceManager(serviceAssemblies));
+			this.AppHost = new TestAppHost(serviceManager.Container, serviceAssemblies);
 
-			EndpointHost.ServiceManager = appHost.Config.ServiceManager;
+			EndpointHost.ConfigureHost(this.AppHost, "TestBase", serviceManager);
+
+			EndpointHost.ServiceManager = this.AppHost.Config.ServiceManager;
 		}
 
 		protected abstract void Configure(Funq.Container container);
@@ -411,7 +384,7 @@ namespace ServiceStack.ServiceInterface.Testing
 
 		private static EndpointHandlerBase GetHandler(string httpMethod, string pathInfo)
 		{
-			var httpHandler = ServiceStackHttpHandlerFactory.GetHandlerForPathInfo(httpMethod, pathInfo, null) as EndpointHandlerBase;
+			var httpHandler = ServiceStackHttpHandlerFactory.GetHandlerForPathInfo(httpMethod, pathInfo, pathInfo, null) as EndpointHandlerBase;
 			if (httpHandler == null)
 				throw new NotSupportedException(pathInfo);
 			return httpHandler;

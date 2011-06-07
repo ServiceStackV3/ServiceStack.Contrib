@@ -13,6 +13,8 @@ namespace ServiceStack.ServiceInterface.Testing
 			this.Container = new Container();
 			this.RequestFilters = new List<Action<IHttpRequest, IHttpResponse, object>>();
 			this.ResponseFilters = new List<Action<IHttpRequest, IHttpResponse, object>>();
+			this.HtmlProviders = new List<StreamSerializerResolverDelegate>();
+			this.CatchAllHandlers = new List<HttpHandlerResolverDelegate>();
 		}
 
 		public T TryResolve<T>()
@@ -27,6 +29,10 @@ namespace ServiceStack.ServiceInterface.Testing
 		public List<Action<IHttpRequest, IHttpResponse, object>> RequestFilters { get; set; }
 
 		public List<Action<IHttpRequest, IHttpResponse, object>> ResponseFilters { get; set; }
+
+		public List<StreamSerializerResolverDelegate> HtmlProviders { get; set; }
+
+		public List<HttpHandlerResolverDelegate> CatchAllHandlers { get; set; }
 
 		public EndpointHostConfig Config { get; set; }
 	}
