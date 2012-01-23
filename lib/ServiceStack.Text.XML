@@ -4,6 +4,16 @@
         <name>ServiceStack.Text</name>
     </assembly>
     <members>
+        <member name="T:ServiceStack.Text.Support.Link`2">
+            <summary>
+            Pretty Thread-Safe cache class from:
+            http://code.google.com/p/dapper-dot-net/source/browse/Dapper/SqlMapper.cs
+            
+            This is a micro-cache; suitable when the number of terms is controllable (a few hundred, for example),
+            and strictly append-only; you cannot change existing values. All key matches are on **REFERENCE**
+            equality. The type is fully thread-safe.
+            </summary>
+        </member>
         <member name="M:ServiceStack.Text.ITypeSerializer`1.CanCreateFromString(System.Type)">
             <summary>
             Determines whether this serializer can create the specified type from a string.
@@ -131,6 +141,42 @@
             Implement the serializer using a more static approach
             </summary>
             <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:ServiceStack.Text.JsConfig.EmitCamelCaseNames">
+            <summary>
+            <see langword="true"/> if the <see cref="T:ServiceStack.Text.Common.ITypeSerializer"/> is configured
+            to take advantage of <see cref="T:System.CLSCompliantAttribute"/> specification,
+            to support user-friendly serialized formats, ie emitting camelCasing for JSON
+            and parsing member names and enum values in a case-insensitive manner.
+            </summary>
+        </member>
+        <member name="F:ServiceStack.Text.JsConfig`1.ExcludeTypeInfo">
+            <summary>
+            Never emit type info for this type
+            </summary>
+        </member>
+        <member name="F:ServiceStack.Text.JsConfig`1.EmitCamelCaseNames">
+            <summary>
+            <see langword="true"/> if the <see cref="T:ServiceStack.Text.Common.ITypeSerializer"/> is configured
+            to take advantage of <see cref="T:System.CLSCompliantAttribute"/> specification,
+            to support user-friendly serialized formats, ie emitting camelCasing for JSON
+            and parsing member names and enum values in a case-insensitive manner.
+            </summary>
+        </member>
+        <member name="F:ServiceStack.Text.JsConfig`1.serializeFn">
+            <summary>
+            Define custom serialization fn for BCL Structs
+            </summary>
+        </member>
+        <member name="F:ServiceStack.Text.JsConfig`1.DeSerializeFn">
+            <summary>
+            Define custom deserialization fn for BCL Structs
+            </summary>
+        </member>
+        <member name="F:ServiceStack.Text.JsConfig`1.ExcludePropertyNames">
+            <summary>
+            Exclude specific properties of this type from being serialized
+            </summary>
         </member>
         <member name="T:ServiceStack.Text.TypeSerializer">
             <summary>

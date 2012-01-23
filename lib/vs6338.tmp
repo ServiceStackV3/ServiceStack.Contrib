@@ -145,62 +145,6 @@
             inbound requests.
             </summary>
         </member>
-        <member name="T:ServiceStack.WebHost.Endpoints.IAppHost">
-            <summary>
-            ASP.NET or HttpListener ServiceStack host
-            </summary>
-        </member>
-        <member name="M:ServiceStack.WebHost.Endpoints.IAppHost.Register``1(``0)">
-            <summary>
-            Register dependency in AppHost IOC on Startup
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="instance"></param>
-        </member>
-        <member name="M:ServiceStack.WebHost.Endpoints.IAppHost.RegisterAs``2">
-            <summary>
-            AutoWired Registration of an interface with a concrete type in AppHost IOC on Startup.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <typeparam name="TAs"></typeparam>
-        </member>
-        <member name="M:ServiceStack.WebHost.Endpoints.IAppHost.RegisterService(System.Type,System.String[])">
-            <summary>
-            Register an Adhoc web service on Startup
-            </summary>
-            <param name="serviceType"></param>
-            <param name="atRestPaths"></param>
-        </member>
-        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.ContentTypeFilters">
-            <summary>
-            Register custom ContentType serializers
-            </summary>
-        </member>
-        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.RequestFilters">
-            <summary>
-            Add Request Filters
-            </summary>
-        </member>
-        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.ResponseFilters">
-            <summary>
-            Add Response Filters
-            </summary>
-        </member>
-        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.HtmlProviders">
-            <summary>
-            Add alternative HTML View Engines
-            </summary>
-        </member>
-        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.CatchAllHandlers">
-            <summary>
-            Provide a catch-all handler that doesn't match any routes
-            </summary>
-        </member>
-        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.Config">
-            <summary>
-            The AppHost config
-            </summary>
-        </member>
         <member name="M:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Start(System.String)">
             <summary>
             Starts the Web Service
@@ -1152,26 +1096,6 @@
             Deletes a specified cookie by setting its value to empty and expiration to -1 days
             </summary>
         </member>
-        <member name="M:ServiceStack.ServiceHost.Cookies.AddPermanentCookie(System.String,System.String)">
-            <summary>
-            Sets a persistent cookie which never expires
-            </summary>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.Cookies.AddSessionCookie(System.String,System.String)">
-            <summary>
-            Sets a session cookie which expires after the browser session closes
-            </summary>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.Cookies.DeleteCookie(System.String)">
-            <summary>
-            Deletes a specified cookie by setting its value to empty and expiration to -1 days
-            </summary>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.Cookies.AddCookie(System.Net.Cookie)">
-            <summary>
-            Sets a persistent cookie which expires after the given time
-            </summary>
-        </member>
         <member name="T:Funq.ReuseScope">
             <summary>
             Determines visibility and reuse of instances provided by the container.
@@ -1200,6 +1124,11 @@
         <member name="F:Funq.ReuseScope.Default">
             <summary>
             Default scope, which equals <see cref="F:Funq.ReuseScope.Hierarchy"/>.
+            </summary>
+        </member>
+        <member name="T:ServiceStack.Configuration.AppSettings">
+            <summary>
+            More familiar name for the new crowd.
             </summary>
         </member>
         <member name="T:ServiceStack.WebHost.Endpoints.Extensions.HttpRequestExtensions">
@@ -1732,13 +1661,13 @@
             <summary>
             When <see cref="M:ServiceStack.MiniProfiler.Profiler.Start(ServiceStack.MiniProfiler.ProfileLevel)"/> is called, if the current request url contains any items in this property,
             no profiler will be instantiated and no results will be displayed.
-            Default value is { "/ss-", "/content/", "/scripts/", "/favicon.ico" }.
+            Default value is { "/mini-profiler-", "/content/", "/scripts/", "/favicon.ico" }.
             </summary>
         </member>
         <member name="P:ServiceStack.MiniProfiler.Profiler.Settings.RouteBasePath">
             <summary>
             The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
-            "/myDirectory/ss-includes.js" rather than just "/mini-profiler-includes.js"
+            "/myDirectory/mini-profiler-includes.js" rather than just "/mini-profiler-includes.js"
             Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
             </summary>
         </member>
@@ -2296,31 +2225,6 @@
 			The resolved service instance or <see langword="null"/> if it cannot be resolved.
 		</returns>
         </member>
-        <member name="M:Funq.Container.RegisterAutoWired``1">
-            <summary>
-            Register an autowired dependency
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Funq.Container.RegisterAutoWiredAs``2">
-            <summary>
-            Register an autowired dependency as a separate type
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Funq.Container.RegisterAs``2">
-            <summary>
-            Alias for RegisterAutoWiredAs
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:Funq.Container.AutoWire(System.Object)">
-            <summary>
-            Auto-wires an existing instance, 
-            ie all public properties are tried to be resolved.
-            </summary>
-            <param name="instance"></param>
-        </member>
         <member name="P:Funq.Container.DefaultOwner">
             <summary>
 			Default owner for new registrations. <see cref="F:Funq.Owner.Container"/> by default.
@@ -2330,11 +2234,6 @@
             <summary>
 			Default reuse scope for new registrations. <see cref="F:Funq.ReuseScope.Hierarchy"/> by default.
 		</summary>
-        </member>
-        <member name="T:ServiceStack.Configuration.AppSettings">
-            <summary>
-            More familiar name for the new crowd.
-            </summary>
         </member>
         <member name="T:ServiceStack.CacheAccess.Providers.ContentCacheManager">
             <summary>
@@ -3333,76 +3232,6 @@
             <param name="bodyPrefix">Add prefix to response body if any</param>
             <param name="bodySuffix">Add suffix to response body if any</param>
             <returns></returns>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.GenerateAutoWireFn``1">
-            <summary>
-            Generates a function which creates and auto-wires <see cref="!:TService"/>.
-            </summary>
-            <typeparam name="TService"></typeparam>
-            <param name="lambdaParam"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.AutoWire(System.Object)">
-            <summary>
-            Auto-wires an existing instance of a specific type.
-            The auto-wiring progress is also cached to be faster 
-            when calling next time with the same type.
-            </summary>
-            <param name="instance"></param>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.Register``1">
-            <summary>
-            Registers the type in the IoC container passed in the constructor and
-            adds auto-wiring to the specified type.
-            Auto-wiring is not cached with this method!
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.RegisterAs``2">
-            <summary>
-            Registers the type in the IoC container passed in the constructor and
-            adds auto-wiring to the specified type.
-            Auto-wiring is not cached with this method!
-            </summary>
-            <typeparam name="T"></typeparam>
-            <typeparam name="TAs"></typeparam>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.RegisterType(System.Type,System.Type)">
-            <summary>
-            Registers the type in the IoC container and
-            adds auto-wiring to the specified type.
-            Additionaly the creation of the type is cached when calling <see cref="M:ServiceStack.ServiceHost.AutoWireContainer.CreateInstance(System.Type)"/> on the same instance.
-            </summary>
-            <param name="serviceType"></param>
-            <param name="inFunqAsType"></param>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.RegisterTypes(System.Type[])">
-            <summary>
-            Registers the types in the IoC container and
-            adds auto-wiring to the specified types.
-            Additionaly the creation of the types is cached when calling <see cref="M:ServiceStack.ServiceHost.AutoWireContainer.CreateInstance(System.Type)"/> on the same instance.
-            </summary>
-            <param name="serviceTypes"></param>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.RegisterTypes(System.Collections.Generic.IEnumerable{System.Type})">
-            <summary>
-            Registers the types in the IoC container and
-            adds auto-wiring to the specified types.
-            Additionaly the creation of the types is cached when calling <see cref="M:ServiceStack.ServiceHost.AutoWireContainer.CreateInstance(System.Type)"/> on the same instance.
-            </summary>
-            <param name="serviceTypes"></param>
-        </member>
-        <member name="M:ServiceStack.ServiceHost.AutoWireContainer.CreateInstance(System.Type)">
-            <summary>
-            Creates a new auto-wired instance of the specified type.
-            </summary>
-            <param name="type"></param>
-            <returns></returns>
-        </member>
-        <member name="P:ServiceStack.ServiceHost.AutoWireContainer.Scope">
-            <summary>
-            Determines in which scope the types registered will be saved in the Funq container.
-            </summary>
         </member>
         <member name="M:ServiceStack.ServiceHost.ServiceManager.#ctor(Funq.Container,ServiceStack.ServiceHost.ServiceController)">
             <summary>
