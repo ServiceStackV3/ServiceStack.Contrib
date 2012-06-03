@@ -5,21 +5,52 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ServiceStack.Common;
 using ServiceStack.Text;
-using ServiceStack.ServiceInterface.Auth;
 
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 
-namespace ServiceStack.Authentication.MongoDB
+namespace ServiceStack.ServiceInterface.Auth
 {
 	public class MongoDBAuthRepository : IUserAuthRepository, IClearable
 	{
+		// http://www.mongodb.org/display/DOCS/How+to+Make+an+Auto+Incrementing+Field
+		class Counters
+		{
+			public int Id { get; set; }
+			public int UserAuthCounter { get; set; }
+			public int UserOAuthProviderCounter { get; set; }
+		}
 
 		//http://stackoverflow.com/questions/3588623/c-sharp-regex-for-a-username-with-a-few-restrictions
 		public Regex ValidUserNameRegEx = new Regex(@"^(?=.{3,15}$)([A-Za-z0-9][._-]?)*$", RegexOptions.Compiled);
 
 		private readonly MongoDatabase mongoDatabase;
+
+		// UserAuth collection name
+		private static string UserAuth_Col
+		{
+			get
+			{
+				return typeof(UserAuth).Name;
+			}
+		}
+		// UserOAuthProvider collection name
+		private static string UserOAuthProvider_Col
+		{
+			get
+			{
+				return typeof(UserOAuthProvider).Name;
+			}
+		}
+		// Counters collection name
+		private static string Counters_Col
+		{
+			get
+			{
+				return typeof(Counters).Name;
+			}
+		}
 
 		public MongoDBAuthRepository(MongoDatabase mongoDatabase)
 		{
@@ -28,22 +59,34 @@ namespace ServiceStack.Authentication.MongoDB
 
 		public void CreateMissingTables()
 		{
-			if(!mongoDatabase.CollectionExists("UserAuth"))
-				mongoDatabase.CreateCollection("UserAuth");
+			if (!mongoDatabase.CollectionExists(UserAuth_Col))
+				mongoDatabase.CreateCollection(UserAuth_Col);
 
-			if (!mongoDatabase.CollectionExists("UserOAuthProvider"))
-				mongoDatabase.CreateCollection("UserOAuthProvider");
+			if (!mongoDatabase.CollectionExists(UserOAuthProvider_Col))
+				mongoDatabase.CreateCollection(UserOAuthProvider_Col);
+
+			if (!mongoDatabase.CollectionExists(Counters_Col))
+			{
+				mongoDatabase.CreateCollection(Counters_Col);
+
+				var CountersCollection = mongoDatabase.GetCollection<Counters>(Counters_Col);
+				Counters counters = new Counters();
+				CountersCollection.Save(counters);
+			}
 		}
 
 		public void DropAndReCreateTables()
 		{
-			if (mongoDatabase.CollectionExists("UserAuth"))
-				mongoDatabase.DropCollection("UserAuth");
-			mongoDatabase.CreateCollection("UserAuth");
+			if (mongoDatabase.CollectionExists(UserAuth_Col))
+				mongoDatabase.DropCollection(UserAuth_Col);
 
-			if (mongoDatabase.CollectionExists("UserOAuthProvider"))
-				mongoDatabase.DropCollection("UserOAuthProvider");
-			mongoDatabase.CreateCollection("UserOAuthProvider");
+			if (mongoDatabase.CollectionExists(UserOAuthProvider_Col))
+				mongoDatabase.DropCollection(UserOAuthProvider_Col);
+
+			if (mongoDatabase.CollectionExists(Counters_Col))
+				mongoDatabase.DropCollection(Counters_Col);
+
+			CreateMissingTables();
 		}
 
 		private void ValidateNewUser(UserAuth newUser, string password)
@@ -61,6 +104,8 @@ namespace ServiceStack.Authentication.MongoDB
 			}
 		}
 
+
+
 		public UserAuth CreateUserAuth(UserAuth newUser, string password)
 		{
 			ValidateNewUser(newUser, password);
@@ -71,19 +116,45 @@ namespace ServiceStack.Authentication.MongoDB
 			string salt;
 			string hash;
 			saltedHash.GetHashAndSaltString(password, out hash, out salt);
-            var digestHelper = new DigestAuthFunctions();
-            newUser.DigestHA1Hash = digestHelper.CreateHa1(newUser.UserName, DigestAuthProvider.Realm, password);
+			var digestHelper = new DigestAuthFunctions();
+			newUser.DigestHA1Hash = digestHelper.CreateHa1(newUser.UserName, DigestAuthProvider.Realm, password);
 			newUser.PasswordHash = hash;
 			newUser.Salt = salt;
 			newUser.CreatedDate = DateTime.UtcNow;
 			newUser.ModifiedDate = newUser.CreatedDate;
 
-			var collection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
-			collection.Insert(newUser);
-			// todo - update id here
+			SaveUser(newUser);
 			return newUser;
 		}
 
+		private void SaveUser(UserAuth userAuth)
+		{
+			if (userAuth.Id == default(int))
+				userAuth.Id = IncUserAuthCounter();
+			var usersCollection = mongoDatabase.GetCollection<UserAuth>(UserAuth_Col);
+			usersCollection.Save(userAuth);
+		}
+
+		private int IncUserAuthCounter()
+		{
+			return IncCounter("UserAuthCounter").UserAuthCounter;
+		}
+
+		private int IncUserOAuthProviderCounter()
+		{
+			return IncCounter("UserOAuthProviderCounter").UserOAuthProviderCounter;
+		}
+
+
+		private Counters IncCounter(string counterName)
+		{
+			var CountersCollection = mongoDatabase.GetCollection<Counters>(Counters_Col);
+			var incId = Update.Inc(counterName, 1);
+			var query = Query.Null;
+			FindAndModifyResult counterIncResult = CountersCollection.FindAndModify(query, SortBy.Null, incId, true);
+			Counters updatedCounters = counterIncResult.GetModifiedDocumentAs<Counters>();
+			return updatedCounters;
+		}
 		private static void AssertNoExistingUser(MongoDatabase mongoDatabase, UserAuth newUser, UserAuth exceptForExistingUser = null)
 		{
 			if (newUser.UserName != null)
@@ -110,27 +181,25 @@ namespace ServiceStack.Authentication.MongoDB
 
 			var hash = existingUser.PasswordHash;
 			var salt = existingUser.Salt;
-            if (password != null)
+			if (password != null)
 			{
 				var saltedHash = new SaltedHash();
 				saltedHash.GetHashAndSaltString(password, out hash, out salt);
 			}
-            // If either one changes the digest hash has to be recalculated
-            var digestHash = existingUser.DigestHA1Hash;
-            if (password != null || existingUser.UserName != newUser.UserName)
-            {
-                var digestHelper = new DigestAuthFunctions();
-                digestHash = digestHelper.CreateHa1(newUser.UserName, DigestAuthProvider.Realm, password);
-            }
+			// If either one changes the digest hash has to be recalculated
+			var digestHash = existingUser.DigestHA1Hash;
+			if (password != null || existingUser.UserName != newUser.UserName)
+			{
+				var digestHelper = new DigestAuthFunctions();
+				digestHash = digestHelper.CreateHa1(newUser.UserName, DigestAuthProvider.Realm, password);
+			}
 			newUser.Id = existingUser.Id;
 			newUser.PasswordHash = hash;
 			newUser.Salt = salt;
-            newUser.DigestHA1Hash = digestHash;
+			newUser.DigestHA1Hash = digestHash;
 			newUser.CreatedDate = existingUser.CreatedDate;
 			newUser.ModifiedDate = DateTime.UtcNow;
-
-			var collection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
-			collection.Insert(newUser);
+			SaveUser(newUser);
 
 			return newUser;
 		}
@@ -143,11 +212,11 @@ namespace ServiceStack.Authentication.MongoDB
 		private static UserAuth GetUserAuthByUserName(MongoDatabase mongoDatabase, string userNameOrEmail)
 		{
 			var isEmail = userNameOrEmail.Contains("@");
-			var collection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
+			var collection = mongoDatabase.GetCollection<UserAuth>(UserAuth_Col);
 
 			QueryComplete query = isEmail
 				? Query.EQ("Email", userNameOrEmail)
-				: Query.EQ("UserName", userNameOrEmail) ;
+				: Query.EQ("UserName", userNameOrEmail);
 
 			UserAuth userAuth = collection.FindOne(query);
 			return userAuth;
@@ -169,21 +238,21 @@ namespace ServiceStack.Authentication.MongoDB
 			userAuth = null;
 			return false;
 		}
-        public bool TryAuthenticate(Dictionary<string,string> digestHeaders, string PrivateKey, int NonceTimeOut, string sequence, out UserAuth userAuth)
-        {
-            //userId = null;
-            userAuth = GetUserAuthByUserName(digestHeaders["username"]);
-            if (userAuth == null) return false;
+		public bool TryAuthenticate(Dictionary<string, string> digestHeaders, string PrivateKey, int NonceTimeOut, string sequence, out UserAuth userAuth)
+		{
+			//userId = null;
+			userAuth = GetUserAuthByUserName(digestHeaders["username"]);
+			if (userAuth == null) return false;
 
-            var digestHelper = new DigestAuthFunctions();
-            if (digestHelper.ValidateResponse(digestHeaders,PrivateKey,NonceTimeOut,userAuth.DigestHA1Hash,sequence))
-            {
-                //userId = userAuth.Id.ToString(CultureInfo.InvariantCulture);
-                return true;
-            }
-            userAuth = null;
-            return false;
-        }
+			var digestHelper = new DigestAuthFunctions();
+			if (digestHelper.ValidateResponse(digestHeaders, PrivateKey, NonceTimeOut, userAuth.DigestHA1Hash, sequence))
+			{
+				//userId = userAuth.Id.ToString(CultureInfo.InvariantCulture);
+				return true;
+			}
+			userAuth = null;
+			return false;
+		}
 
 		public void LoadUserAuth(IAuthSession session, IOAuthTokens tokens)
 		{
@@ -198,15 +267,15 @@ namespace ServiceStack.Authentication.MongoDB
 			if (userAuth == null) return;
 
 			session.PopulateWith(userAuth);
-            session.UserAuthId = userAuth.Id.ToString(CultureInfo.InvariantCulture);
-            session.ProviderOAuthAccess = GetUserOAuthProviders(session.UserAuthId)
+			session.UserAuthId = userAuth.Id.ToString(CultureInfo.InvariantCulture);
+			session.ProviderOAuthAccess = GetUserOAuthProviders(session.UserAuthId)
 				.ConvertAll(x => (IOAuthTokens)x);
-			
+
 		}
 
 		public UserAuth GetUserAuth(string userAuthId)
 		{
-			var collection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
+			var collection = mongoDatabase.GetCollection<UserAuth>(UserAuth_Col);
 			UserAuth userAuth = collection.FindOneById(userAuthId);
 			return userAuth;
 		}
@@ -225,8 +294,8 @@ namespace ServiceStack.Authentication.MongoDB
 			if (userAuth.CreatedDate == default(DateTime))
 				userAuth.CreatedDate = userAuth.ModifiedDate;
 
-			var collection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
-			collection.Insert(userAuth);
+			var collection = mongoDatabase.GetCollection<UserAuth>(UserAuth_Col);
+			SaveUser(userAuth);
 		}
 
 		public void SaveUserAuth(UserAuth userAuth)
@@ -235,8 +304,7 @@ namespace ServiceStack.Authentication.MongoDB
 			if (userAuth.CreatedDate == default(DateTime))
 				userAuth.CreatedDate = userAuth.ModifiedDate;
 
-			var collection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
-			collection.Insert(userAuth);
+			SaveUser(userAuth);
 		}
 
 		public List<UserOAuthProvider> GetUserOAuthProviders(string userAuthId)
@@ -245,7 +313,7 @@ namespace ServiceStack.Authentication.MongoDB
 
 			QueryComplete query = Query.EQ("UserAuthId", userAuthId);
 
-			var collection = mongoDatabase.GetCollection<UserOAuthProvider>("UserOAuthProvider");
+			var collection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
 			MongoCursor<UserOAuthProvider> queryResult = collection.Find(query);
 			return queryResult.ToList();
 
@@ -272,13 +340,13 @@ namespace ServiceStack.Authentication.MongoDB
 							Query.EQ("UserId", tokens.UserId)
 						);
 
-			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>("UserOAuthProvider");
+			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
 			var oAuthProvider = providerCollection.FindOne(query);
 
 
 			if (oAuthProvider != null)
 			{
-				var userAuthCollection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
+				var userAuthCollection = mongoDatabase.GetCollection<UserAuth>(UserAuth_Col);
 				var userAuth = userAuthCollection.FindOneById(oAuthProvider.UserAuthId);
 				return userAuth;
 			}
@@ -292,13 +360,14 @@ namespace ServiceStack.Authentication.MongoDB
 			var query = Query.And(
 							Query.EQ("Provider", tokens.Provider),
 							Query.EQ("UserId", tokens.UserId)
-						); 
-			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>("UserOAuthProvider");
+						);
+			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
 			var oAuthProvider = providerCollection.FindOne(query);
 
 			if (oAuthProvider == null)
 			{
-				oAuthProvider = new UserOAuthProvider {
+				oAuthProvider = new UserOAuthProvider
+				{
 					Provider = tokens.Provider,
 					UserId = tokens.UserId,
 				};
@@ -311,9 +380,10 @@ namespace ServiceStack.Authentication.MongoDB
 			if (userAuth.CreatedDate == default(DateTime))
 				userAuth.CreatedDate = userAuth.ModifiedDate;
 
-			var userAuthCollection = mongoDatabase.GetCollection<UserAuth>("UserAuth");
+			SaveUser(userAuth);
 
-			userAuthCollection.Save(userAuth);
+			if (oAuthProvider.Id == default(int))
+				oAuthProvider.Id = IncUserOAuthProviderCounter();
 
 			oAuthProvider.UserAuthId = userAuth.Id;
 
