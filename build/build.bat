@@ -1,9 +1,5 @@
 REM SET BUILD=Debug
 SET BUILD=Release
 
-COPY ..\src\ServiceStack.ServiceInterface\bin\%BUILD%\ServiceStack.ServiceInterface.* ..\..\ServiceStack\release\latest
-
-COPY ..\src\ServiceStack.ServiceInterface\bin\%BUILD%\ServiceStack.ServiceInterface.* ..\..\ServiceStack\lib
-COPY ..\src\ServiceStack.ServiceInterface\bin\%BUILD%\ServiceStack.ServiceInterface.* ..\..\ServiceStack.Examples\lib
-COPY ..\src\ServiceStack.ServiceInterface\bin\%BUILD%\ServiceStack.ServiceInterface.* ..\..\ServiceStack.RedisWebServices\lib
-
+COPY ..\src\ServiceStack.Authentication.MongoDB\bin\%BUILD%\ServiceStack.Authentication.MongoDB.* ..\NuGet\ServiceStack.Authentication.MongoDB\lib
+COPY ..\src\ServiceStack.Authentication.NHibernate\bin\%BUILD%\ServiceStack.Authentication.NHibernate.* ..\NuGet\ServiceStack.Authentication.NHibernate\lib

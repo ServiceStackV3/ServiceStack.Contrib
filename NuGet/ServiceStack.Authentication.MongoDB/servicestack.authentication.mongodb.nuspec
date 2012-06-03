@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>ServiceStack.Authentication.MongoDB</id> 
+    <version>3.8.0</version> 
+    <authors>Assaf Raman, Demis Bellot, ServiceStack contributors</authors> 
+    <owners>Assaf Raman, Demis Bellot, ServiceStack contributors</owners>
+    <description>
+        A MongoDB IUserAuthRepository to persist User registration and authentication info in a Mongo DB NoSQL datastore.
+        Supports ServiceStack's built-in Authentication Provider Model: 
+        https://github.com/ServiceStack/ServiceStack/wiki/Authentication-and-authorization
+        Which has support for Twitter, Facebook, Basic, Digest, Credentials and Custom Credentials Authentication modes out-of-the-box.
+    </description> 
+    <projectUrl>https://github.com/ServiceStack/ServiceStack.OrmLite</projectUrl>
+    <licenseUrl>https://github.com/ServiceStack/ServiceStack/blob/master/LICENSE</licenseUrl>
+    <iconUrl>http://www.servicestack.net/logo-100x100.png</iconUrl>
+    <tags>ServiceStack Authentication Authorization MongoDB NoSQL POCO Code-First</tags>
+    <language>en-US</language> 
+    <copyright>ServiceStack 2012 and contributors</copyright>
+    <dependencies>
+      <dependency id="ServiceStack" />	
+      <dependency id="mongocsharpdriver" />
+    </dependencies> 
+  </metadata> 
+</package>
