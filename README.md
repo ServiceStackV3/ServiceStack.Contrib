@@ -1,27 +1,39 @@
-# Useful high-level App and use-case specific features and utils
+# High-level ServiceStack features and extensions contributed by the community
 
+Although ServiceStack is an opinionated web service framework (i.e. includes most components required to make high-performance web services), each feature is built around pure/clean, dependency-free 
+C# interfaces enabling the use of alternate, pluggable, xml/config-free and testable C# components.
 
-##ServiceStack.ServiceInterface.dll
+By default ServiceStack includes high-performance replacements for [ASP.NET's Session, Caching, Logging, Authentication, Membership and Configuration providers](http://www.servicestack.net/mvc-powerpack/) 
+yielding config-free, testable and mockable alternatives that can be hosted in or outside of an ASP.NET web host.
 
-Generic, Common and High-level functionality to assist with your web services implementation.
+Whilst any providers contributed by the community that require any external dependencies are kept here (and available on NuGet):
 
-The ServiceBase and RestServiceBase classes provide use-ful base classes for your web services to inherit from.
+## Authentication Providers
 
-#### ServiceBase - base class for RPC services
-  
-  * Handles C# exceptions and serializes them into your Response DTO's so your clients can programatically access them
-  * If you have a IRedisClient installed, rolling error logs will be maintained so you can easily see the latest errors
-  * **base.ResolveService()** - let's you access a pre-configured instance of another web service so you can delegate required functionality
-  * **base.AppHost** - Accesses the underlying AppHost letting you inspect its configuration, etc
+ServiceStack's built-in [Authentication and Authorization plugin](https://github.com/ServiceStack/ServiceStack/wiki/Authentication-and-authorization) 
+provides an extensible and pluggable model supporting multiple [caching providers](https://github.com/ServiceStack/ServiceStack/wiki/Caching) (for fast pre-request session access) as well as 
+multiple datastore providers for long-term persistance of User Registration and Authentication information.
 
-#### RestServiceBase - base class for REST Services (extends ServiceBase)
+### Caching Providers ([ICacheClient](https://github.com/ServiceStack/ServiceStack/blob/master/src/ServiceStack.Interfaces/CacheAccess/ICacheClient.cs))
 
-  * Reduces the boiler-plate by already implementing all REST operations so you don't have to e.g. IRestGetService<TRequest>
+  - In Memory: `MemoryCacheClient` in [ServiceStack](https://nuget.org/packages/ServiceStack)
+  - Redis: `PooledRedisClientManager` and `BasicRedisClientManager` in [ServiceStack.Redis](https://nuget.org/packages/ServiceStack.Redis)
+  - Memcached: `MemcachedClientCache` in [ServiceStack.Caching.Memcached](https://nuget.org/packages/ServiceStack.Caching.Memcached)
+  - Azure: `AzureCacheClient` in [ServiceStack.Caching.Azure](https://nuget.org/packages/ServiceStack.Caching.Azure) - created by [Manuel Nelson](https://gist.github.com/manuelnelson)
 
+### User Auth Repositories ([IUserAuthRepository](https://github.com/ServiceStack/ServiceStack/blob/master/src/ServiceStack.ServiceInterface/Auth/IUserAuthRepository.cs))
 
-#### ServiceModel
-Generic DTO types useful for all web services. e.g. **ResponseStatus** is where C# exceptions get injected into
+  - OrmLite: `OrmLiteAuthRepository` in [ServiceStack](https://nuget.org/packages/ServiceStack)
+  - Redis: `RedisAuthRepository` in [ServiceStack](https://nuget.org/packages/ServiceStack)
+  - In Memory: `InMemoryAuthRepository` in [ServiceStack](https://nuget.org/packages/ServiceStack)
+  - Mongo DB: `MongoDBAuthRepository` in [ServiceStack.Authentication.MongoDB](https://nuget.org/packages/ServiceStack.Authentication.MongoDB) - created by [Assaf Raman](https://github.com/assaframan)
+  - NHibernate: `NHibernateUserAuthRepository` in [ServiceStack.Authentication.NHibernate](https://nuget.org/packages/ServiceStack.Authentication.NHibernate) - created by [Joshua Lewis](https://gist.github.com/joshilewis)
 
-#### Session
-Existing classes to help manage a users session
+## Compression
 
+As the original compression libraries in .NET 2.0 (they're better now) were both slow and yielded in-efficiently large results, we've enabled adapters to plug-in alternative compression libraries.
+The [ServiceStack.Compression](https://github.com/ServiceStack/ServiceStack.Contrib/tree/master/src/ServiceStack.Compression) project provides GZip and Deflate compression adapters for the 
+excellent [ICSharpCode](http://www.icsharpcode.net/) libraries which you can enable ServiceStack to use with:
+
+    StreamExtensions.DeflateProvider = new ICSharpDeflateProvider();
+    StreamExtensions.GZipProvider = new ICSharpGZipProvider();
