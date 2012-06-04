@@ -27,7 +27,7 @@ multiple datastore providers for long-term persistance of User Registration and 
   - Redis: `RedisAuthRepository` in [ServiceStack](https://nuget.org/packages/ServiceStack)
   - In Memory: `InMemoryAuthRepository` in [ServiceStack](https://nuget.org/packages/ServiceStack)
   - Mongo DB: `MongoDBAuthRepository` in [ServiceStack.Authentication.MongoDB](https://nuget.org/packages/ServiceStack.Authentication.MongoDB) - created by [Assaf Raman](https://github.com/assaframan)
-  - NHibernate: `NHibernateUserAuthRepository` in [ServiceStack.Authentication.NHibernate](https://nuget.org/packages/ServiceStack.Authentication.NHibernate) - created by [Joshua Lewis](https://gist.github.com/joshilewis)
+  - NHibernate: `NHibernateUserAuthRepository` in [ServiceStack.Authentication.NHibernate](https://nuget.org/packages/ServiceStack.Authentication.NHibernate) - created by [Joshua Lewis](https://github.com/joshilewis)
 
 ## Compression
 
