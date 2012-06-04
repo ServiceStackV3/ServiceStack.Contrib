@@ -6,7 +6,7 @@ C# interfaces enabling the use of alternate, pluggable, xml/config-free and test
 By default ServiceStack includes high-performance replacements for [ASP.NET's Session, Caching, Logging, Authentication, Membership and Configuration providers](http://www.servicestack.net/mvc-powerpack/) 
 yielding config-free, testable and mockable alternatives that can be hosted in or outside of an ASP.NET web host.
 
-Whilst any providers contributed by the community that require any external dependencies are kept here (and available on NuGet):
+Whilst any providers contributed by the community that require any external dependencies are kept here (with links to their NuGet packages):
 
 ## Authentication Providers
 
@@ -17,7 +17,7 @@ multiple datastore providers for long-term persistance of User Registration and 
 ### Caching Providers ([ICacheClient](https://github.com/ServiceStack/ServiceStack/blob/master/src/ServiceStack.Interfaces/CacheAccess/ICacheClient.cs))
 
   - In Memory: `MemoryCacheClient` in [ServiceStack](https://nuget.org/packages/ServiceStack)
-  - Redis: `PooledRedisClientManager` and `BasicRedisClientManager` in [ServiceStack.Redis](https://nuget.org/packages/ServiceStack.Redis)
+  - Redis: `RedisClient`, `PooledRedisClientManager` and `BasicRedisClientManager` in [ServiceStack.Redis](https://nuget.org/packages/ServiceStack.Redis)
   - Memcached: `MemcachedClientCache` in [ServiceStack.Caching.Memcached](https://nuget.org/packages/ServiceStack.Caching.Memcached)
   - Azure: `AzureCacheClient` in [ServiceStack.Caching.Azure](https://nuget.org/packages/ServiceStack.Caching.Azure) - created by [Manuel Nelson](https://gist.github.com/manuelnelson)
 
