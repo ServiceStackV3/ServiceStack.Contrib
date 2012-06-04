@@ -1,15 +1,14 @@
 <?xml version="1.0"?>
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <id>ServiceStack.Authentication.NHibernate</id> 
+    <id>ServiceStack.Caching.Memcached</id> 
     <version>3.8.2</version> 
-    <authors>Joshua Lewis, ServiceStack contributors</authors> 
-    <owners>Joshua Lewis, ServiceStack contributors</owners>
+    <authors>Demis Bellot, ServiceStack contributors</authors> 
+    <owners>Demis Bellot, ServiceStack contributors</owners>
     <description>
-        An NHibernate IUserAuthRepository to persist User registration and authentication info in any RDBMS NHibernate supports.
-        Implements ServiceStack's built-in AuthProvider Model:
-        https://github.com/ServiceStack/ServiceStack/wiki/Authentication-and-authorization
-        inc. Twitter, Facebook, Basic, Digest, Credentials Auth modes out-of-the-box.
+        An Memcached cache client implementing ServiceStack's ICacheClient:
+        https://github.com/ServiceStack/ServiceStack/wiki/Caching
+        Which also supports InMemory, Redis and Azure cache providers.
     </description> 
     <projectUrl>https://github.com/ServiceStack/ServiceStack.OrmLite</projectUrl>
     <licenseUrl>https://github.com/ServiceStack/ServiceStack/blob/master/LICENSE</licenseUrl>
@@ -18,10 +17,7 @@
     <language>en-US</language> 
     <copyright>ServiceStack 2012 and contributors</copyright>
     <dependencies>
-        <dependency id="ServiceStack" />
-        <dependency id="Iesi.Collections" />
-        <dependency id="NHibernate" />
-        <dependency id="FluentNHibernate" />
+        <dependency id="ServiceStack.Common" />
     </dependencies>
 </metadata>
 </package>

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using Enyim.Caching;
+using Enyim.Caching.Configuration;
+using Enyim.Caching.Memcached;
 using ServiceStack.Logging;
-using InnerClient = Enyim.Caching;
 
 namespace ServiceStack.CacheAccess.Memcached
 {
@@ -19,7 +20,7 @@ namespace ServiceStack.CacheAccess.Memcached
 	{
 		protected override ILog Log { get { return LogManager.GetLogger(GetType()); } }
 
-		private InnerClient.MemcachedClient client;
+		private MemcachedClient client;
 
 		public MemcachedClientCache(IEnumerable<string> hosts)
 		{
@@ -54,7 +55,7 @@ namespace ServiceStack.CacheAccess.Memcached
 
 		private void LoadClient(IEnumerable<IPEndPoint> ipEndpoints)
 		{
-			var config = new InnerClient.Configuration.MemcachedClientConfiguration();
+			var config = new MemcachedClientConfiguration();
 			foreach (var ipEndpoint in ipEndpoints)
 			{
 				config.Servers.Add(ipEndpoint);
@@ -65,10 +66,10 @@ namespace ServiceStack.CacheAccess.Memcached
 			config.SocketPool.ConnectionTimeout = new TimeSpan(0, 0, 10);
 			config.SocketPool.DeadTimeout = new TimeSpan(0, 2, 0);
 
-			this.client = new InnerClient.MemcachedClient(config);
+			this.client = new MemcachedClient(config);
 		}
 
-		public MemcachedClientCache(InnerClient.MemcachedClient client)
+		public MemcachedClientCache(MemcachedClient client)
 		{
 			if (client == null)
 			{
@@ -151,112 +152,112 @@ namespace ServiceStack.CacheAccess.Memcached
 
 		public bool Add<T>(string key, T value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Add, key, value));
+			return Execute(() => client.Store(StoreMode.Add, key, value));
 		}
 
 		public bool Set<T>(string key, T value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, value));
+			return Execute(() => client.Store(StoreMode.Set, key, value));
 		}
 
 		public bool Replace<T>(string key, T value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Replace, key, value));
+			return Execute(() => client.Store(StoreMode.Replace, key, value));
 		}
 
 		public bool Add<T>(string key, T value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Add, key, value, expiresAt));
+			return Execute(() => client.Store(StoreMode.Add, key, value, expiresAt));
 		}
 
 		public bool Set<T>(string key, T value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, value, expiresAt));
+			return Execute(() => client.Store(StoreMode.Set, key, value, expiresAt));
 		}
 
 		public bool Replace<T>(string key, T value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Replace, key, value, expiresAt));
+			return Execute(() => client.Store(StoreMode.Replace, key, value, expiresAt));
 		}
 
 		public bool Add<T>(string key, T value, TimeSpan expiresIn)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Add, key, value, expiresIn));
+			return Execute(() => client.Store(StoreMode.Add, key, value, expiresIn));
 		}
 
 		public bool Set<T>(string key, T value, TimeSpan expiresIn)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, value, expiresIn));
+			return Execute(() => client.Store(StoreMode.Set, key, value, expiresIn));
 		}
 
 		public bool Replace<T>(string key, T value, TimeSpan expiresIn)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Replace, key, value, expiresIn));
+			return Execute(() => client.Store(StoreMode.Replace, key, value, expiresIn));
 		}
 
 		public bool Set(string key, byte[] value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, value));
+			return Execute(() => client.Store(StoreMode.Set, key, value));
 		}
 
 		public bool Add(string key, string value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Add, key, Encoding.UTF8.GetBytes(value)));
+			return Execute(() => client.Store(StoreMode.Add, key, Encoding.UTF8.GetBytes(value)));
 		}
 
 		public bool Set(string key, string value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, Encoding.UTF8.GetBytes(value)));
+			return Execute(() => client.Store(StoreMode.Set, key, Encoding.UTF8.GetBytes(value)));
 		}
 
 		public bool Replace(string key, string value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Replace, key, Encoding.UTF8.GetBytes(value)));
+			return Execute(() => client.Store(StoreMode.Replace, key, Encoding.UTF8.GetBytes(value)));
 		}
 
 		public bool Add(string key, string value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Add, key, Encoding.UTF8.GetBytes(value), expiresAt));
+			return Execute(() => client.Store(StoreMode.Add, key, Encoding.UTF8.GetBytes(value), expiresAt));
 		}
 
 		public bool Set(string key, string value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, Encoding.UTF8.GetBytes(value), expiresAt));
+			return Execute(() => client.Store(StoreMode.Set, key, Encoding.UTF8.GetBytes(value), expiresAt));
 		}
 
 		public bool Replace(string key, string value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Replace, key, Encoding.UTF8.GetBytes(value), expiresAt));
+			return Execute(() => client.Store(StoreMode.Replace, key, Encoding.UTF8.GetBytes(value), expiresAt));
 		}
 
 		public bool Add(string key, object value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Add, key, value));
+			return Execute(() => client.Store(StoreMode.Add, key, value));
 		}
 
 		public bool Set(string key, object value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, value));
+			return Execute(() => client.Store(StoreMode.Set, key, value));
 		}
 
 		public bool Replace(string key, object value)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Replace, key, value));
+			return Execute(() => client.Store(StoreMode.Replace, key, value));
 		}
 
 		public bool Add(string key, object value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Add, key, value, expiresAt));
+			return Execute(() => client.Store(StoreMode.Add, key, value, expiresAt));
 		}
 
 		public bool Set(string key, object value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Set, key, value, expiresAt));
+			return Execute(() => client.Store(StoreMode.Set, key, value, expiresAt));
 		}
 
 		public bool Replace(string key, object value, DateTime expiresAt)
 		{
-			return Execute(() => client.Store(InnerClient.Memcached.StoreMode.Replace, key, value, expiresAt));
+			return Execute(() => client.Store(StoreMode.Replace, key, value, expiresAt));
 		}
 
 		public bool Append(string key, byte[] data)

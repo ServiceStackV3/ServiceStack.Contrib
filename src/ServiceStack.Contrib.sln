@@ -2,8 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1CA66D0F-9000-4AB6-A71A-4E64F1A391B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Memcached", "ServiceStack.CacheAccess.Memcached\ServiceStack.CacheAccess.Memcached.csproj", "{600612F3-15B4-45B5-9D39-06FA016B81C9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Compression", "ServiceStack.Compression\ServiceStack.Compression.csproj", "{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Memcached.Tests", "..\tests\ServiceStack.CacheAccess.Memcached.Tests\ServiceStack.CacheAccess.Memcached.Tests.csproj", "{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}"
@@ -11,46 +9,77 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{21E2FAC5-8CCD-4E23-962C-A44B07C1D5A1}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\build.bat = ..\build\build.bat
+		..\NuGet\NuGetPack.cmd = ..\NuGet\NuGetPack.cmd
 		..\NuGet\ServiceStack.Authentication.MongoDB\servicestack.authentication.mongodb.nuspec = ..\NuGet\ServiceStack.Authentication.MongoDB\servicestack.authentication.mongodb.nuspec
 		..\NuGet\ServiceStack.Authentication.NHibernate\servicestack.authentication.nhibernate.nuspec = ..\NuGet\ServiceStack.Authentication.NHibernate\servicestack.authentication.nhibernate.nuspec
+		..\NuGet\ServiceStack.Caching.Azure\servicestack.caching.azure.nuspec = ..\NuGet\ServiceStack.Caching.Azure\servicestack.caching.azure.nuspec
+		..\NuGet\ServiceStack.Caching.Memcached\servicestack.caching.memcached.nuspec = ..\NuGet\ServiceStack.Caching.Memcached\servicestack.caching.memcached.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Authentication.MongoDB", "ServiceStack.Authentication.MongoDB\ServiceStack.Authentication.MongoDB.csproj", "{16E42781-8872-4468-9B7A-9140778A4D5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Authentication.NHibernate", "ServiceStack.Authentication.NHibernate\ServiceStack.Authentication.NHibernate.csproj", "{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Memcached", "ServiceStack.CacheAccess.Memcached\ServiceStack.CacheAccess.Memcached.csproj", "{600612F3-15B4-45B5-9D39-06FA016B81C9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Azure", "ServiceStack.CacheAccess.Azure\ServiceStack.CacheAccess.Azure.csproj", "{08840867-041E-46A2-97C3-EA223161D942}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		MonoTouch|Any CPU = MonoTouch|Any CPU
 		Release|Any CPU = Release|Any CPU
+		STATIC_ONLY NO_EXPRESSIONS|Any CPU = STATIC_ONLY NO_EXPRESSIONS|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.MonoTouch|Any CPU.ActiveCfg = MonoTouch|Any CPU
+		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.MonoTouch|Any CPU.Build.0 = MonoTouch|Any CPU
 		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = STATIC_ONLY NO_EXPRESSIONS|Any CPU
+		{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = STATIC_ONLY NO_EXPRESSIONS|Any CPU
 		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.MonoTouch|Any CPU.ActiveCfg = Release|Any CPU
+		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.MonoTouch|Any CPU.Build.0 = Release|Any CPU
 		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Release|Any CPU
+		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Release|Any CPU
 		{16E42781-8872-4468-9B7A-9140778A4D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{16E42781-8872-4468-9B7A-9140778A4D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16E42781-8872-4468-9B7A-9140778A4D5E}.MonoTouch|Any CPU.ActiveCfg = Release|Any CPU
+		{16E42781-8872-4468-9B7A-9140778A4D5E}.MonoTouch|Any CPU.Build.0 = Release|Any CPU
 		{16E42781-8872-4468-9B7A-9140778A4D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16E42781-8872-4468-9B7A-9140778A4D5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16E42781-8872-4468-9B7A-9140778A4D5E}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Release|Any CPU
+		{16E42781-8872-4468-9B7A-9140778A4D5E}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Release|Any CPU
 		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.MonoTouch|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.MonoTouch|Any CPU.Build.0 = Release|Any CPU
 		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C9B657-D8AF-4DF2-9BB8-C09AA8F5CBE2}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Release|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.MonoTouch|Any CPU.ActiveCfg = MonoTouch|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.MonoTouch|Any CPU.Build.0 = MonoTouch|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = STATIC_ONLY NO_EXPRESSIONS|Any CPU
+		{600612F3-15B4-45B5-9D39-06FA016B81C9}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = STATIC_ONLY NO_EXPRESSIONS|Any CPU
 		{08840867-041E-46A2-97C3-EA223161D942}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08840867-041E-46A2-97C3-EA223161D942}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08840867-041E-46A2-97C3-EA223161D942}.MonoTouch|Any CPU.ActiveCfg = Release|Any CPU
+		{08840867-041E-46A2-97C3-EA223161D942}.MonoTouch|Any CPU.Build.0 = Release|Any CPU
 		{08840867-041E-46A2-97C3-EA223161D942}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08840867-041E-46A2-97C3-EA223161D942}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08840867-041E-46A2-97C3-EA223161D942}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Release|Any CPU
+		{08840867-041E-46A2-97C3-EA223161D942}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
