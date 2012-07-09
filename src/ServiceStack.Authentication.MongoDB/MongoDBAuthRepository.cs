@@ -214,7 +214,7 @@ namespace ServiceStack.ServiceInterface.Auth
 			var isEmail = userNameOrEmail.Contains("@");
 			var collection = mongoDatabase.GetCollection<UserAuth>(UserAuth_Col);
 
-			QueryComplete query = isEmail
+			IMongoQuery query = isEmail
 				? Query.EQ("Email", userNameOrEmail)
 				: Query.EQ("UserName", userNameOrEmail);
 
@@ -276,7 +276,7 @@ namespace ServiceStack.ServiceInterface.Auth
 		public UserAuth GetUserAuth(string userAuthId)
 		{
 			var collection = mongoDatabase.GetCollection<UserAuth>(UserAuth_Col);
-			UserAuth userAuth = collection.FindOneById(userAuthId);
+			UserAuth userAuth = collection.FindOneById(int.Parse(userAuthId));
 			return userAuth;
 		}
 
@@ -311,7 +311,7 @@ namespace ServiceStack.ServiceInterface.Auth
 		{
 			var id = int.Parse(userAuthId);
 
-			QueryComplete query = Query.EQ("UserAuthId", userAuthId);
+			IMongoQuery query = Query.EQ("UserAuthId", int.Parse(userAuthId));
 
 			var collection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
 			MongoCursor<UserOAuthProvider> queryResult = collection.Find(query);
@@ -337,7 +337,7 @@ namespace ServiceStack.ServiceInterface.Auth
 
 			var query = Query.And(
 							Query.EQ("Provider", tokens.Provider),
-							Query.EQ("UserId", tokens.UserId)
+							Query.EQ("UserId",  int.Parse(tokens.UserId))
 						);
 
 			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
@@ -359,7 +359,7 @@ namespace ServiceStack.ServiceInterface.Auth
 
 			var query = Query.And(
 							Query.EQ("Provider", tokens.Provider),
-							Query.EQ("UserId", tokens.UserId)
+							Query.EQ("UserId",  int.Parse(tokens.UserId))
 						);
 			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
 			var oAuthProvider = providerCollection.FindOne(query);
