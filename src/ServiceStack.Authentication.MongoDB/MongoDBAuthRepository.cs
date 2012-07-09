@@ -337,7 +337,7 @@ namespace ServiceStack.ServiceInterface.Auth
 
 			var query = Query.And(
 							Query.EQ("Provider", tokens.Provider),
-							Query.EQ("UserId",  int.Parse(tokens.UserId))
+							Query.EQ("UserId",  tokens.UserId)
 						);
 
 			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
@@ -359,7 +359,7 @@ namespace ServiceStack.ServiceInterface.Auth
 
 			var query = Query.And(
 							Query.EQ("Provider", tokens.Provider),
-							Query.EQ("UserId",  int.Parse(tokens.UserId))
+							Query.EQ("UserId",  tokens.UserId)
 						);
 			var providerCollection = mongoDatabase.GetCollection<UserOAuthProvider>(UserOAuthProvider_Col);
 			var oAuthProvider = providerCollection.FindOne(query);
