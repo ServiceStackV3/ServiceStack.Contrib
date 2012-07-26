@@ -5,7 +5,8 @@ using System.Text;
 using Enyim.Caching;
 using Enyim.Caching.Configuration;
 using Enyim.Caching.Memcached;
-using ServiceStack.Logging;
+using ILog = ServiceStack.Logging.ILog;
+using LogManager = ServiceStack.Logging.LogManager;
 
 namespace ServiceStack.CacheAccess.Memcached
 {
@@ -108,16 +109,6 @@ namespace ServiceStack.CacheAccess.Memcached
 			ucas = default(ulong);
 			return null;
 		}
-		
-		public string GetText(string key)
-		{
-			return Execute(() => Encoding.UTF8.GetString((byte[])client.Get(key)));
-		}
-
-		public byte[] GetBytes(string key)
-		{
-			return Execute(() => (byte[])client.Get(key));
-		}
 
 		public T Get<T>(string key)
 		{
@@ -142,12 +133,12 @@ namespace ServiceStack.CacheAccess.Memcached
 
 		public long Increment(string key, uint amount)
 		{
-			return Execute(() => client.Increment(key, amount));
+			return Execute(() => (long)client.Increment(key, 0, amount));
 		}
 
 		public long Decrement(string key, uint amount)
 		{
-			return Execute(() => client.Decrement(key, amount));
+			return Execute(() => (long)client.Decrement(key, 0, amount));
 		}
 
 		public bool Add<T>(string key, T value)
@@ -195,41 +186,6 @@ namespace ServiceStack.CacheAccess.Memcached
 			return Execute(() => client.Store(StoreMode.Replace, key, value, expiresIn));
 		}
 
-		public bool Set(string key, byte[] value)
-		{
-			return Execute(() => client.Store(StoreMode.Set, key, value));
-		}
-
-		public bool Add(string key, string value)
-		{
-			return Execute(() => client.Store(StoreMode.Add, key, Encoding.UTF8.GetBytes(value)));
-		}
-
-		public bool Set(string key, string value)
-		{
-			return Execute(() => client.Store(StoreMode.Set, key, Encoding.UTF8.GetBytes(value)));
-		}
-
-		public bool Replace(string key, string value)
-		{
-			return Execute(() => client.Store(StoreMode.Replace, key, Encoding.UTF8.GetBytes(value)));
-		}
-
-		public bool Add(string key, string value, DateTime expiresAt)
-		{
-			return Execute(() => client.Store(StoreMode.Add, key, Encoding.UTF8.GetBytes(value), expiresAt));
-		}
-
-		public bool Set(string key, string value, DateTime expiresAt)
-		{
-			return Execute(() => client.Store(StoreMode.Set, key, Encoding.UTF8.GetBytes(value), expiresAt));
-		}
-
-		public bool Replace(string key, string value, DateTime expiresAt)
-		{
-			return Execute(() => client.Store(StoreMode.Replace, key, Encoding.UTF8.GetBytes(value), expiresAt));
-		}
-
 		public bool Add(string key, object value)
 		{
 			return Execute(() => client.Store(StoreMode.Add, key, value));
@@ -260,44 +216,14 @@ namespace ServiceStack.CacheAccess.Memcached
 			return Execute(() => client.Store(StoreMode.Replace, key, value, expiresAt));
 		}
 
-		public bool Append(string key, byte[] data)
-		{
-			return Execute(() => client.Append(key, data));
-		}
-
-		public bool Prepend(string key, byte[] data)
-		{
-			return Execute(() => client.Prepend(key, data));
-		}
-
 		public bool CheckAndSet(string key, object value, ulong cas)
 		{
-			return Execute(() => client.CheckAndSet(key, value, cas));
-		}
-
-		public bool CheckAndSet(string key, byte[] value, int offset, int length, ulong cas)
-		{
-			return Execute(() => client.CheckAndSet(key, value, offset, length, cas));
-		}
-
-		public bool CheckAndSet(string key, object value, ulong cas, TimeSpan validFor)
-		{
-			return Execute(() => client.CheckAndSet(key, value, cas, validFor));
+			return Execute(() => client.Cas(StoreMode.Replace, key, value, cas).Result);
 		}
 
 		public bool CheckAndSet(string key, object value, ulong cas, DateTime expiresAt)
 		{
-			return Execute(() => client.CheckAndSet(key, value, cas, expiresAt));
-		}
-
-		public bool CheckAndSet(string key, byte[] value, int offset, int length, ulong cas, TimeSpan validFor)
-		{
-			return Execute(() => client.CheckAndSet(key, value, offset, length, cas, validFor));
-		}
-
-		public bool CheckAndSet(string key, byte[] value, int offset, int length, ulong cas, DateTime expiresAt)
-		{
-			return Execute(() => client.CheckAndSet(key, value, offset, length, cas, expiresAt));
+			return Execute(() => client.Cas(StoreMode.Replace, key, value, expiresAt, cas).Result);
 		}
 
 		public void FlushAll()
@@ -334,7 +260,15 @@ namespace ServiceStack.CacheAccess.Memcached
 		{
 			//Can't call methods with 'out' params in anonymous method blocks
 			//Calling client directly instead - Add try{} if warranted.
-			return client.Get(keys, out casValues);
+
+		    var retVal = new Dictionary<string, object>();
+		    casValues = new Dictionary<string, ulong>();
+		    foreach (var casResult in client.GetWithCas(keys))
+		    {
+		        retVal.Add(casResult.Key, casResult.Value.Result);
+		        casValues.Add(casResult.Key, casResult.Value.Cas);
+		    }
+		    return retVal;
 		}
 
 		public void RemoveAll(IEnumerable<string> keys)
