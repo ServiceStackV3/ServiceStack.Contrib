@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using ServiceStack.CacheAccess.Providers;
 using ServiceStack.Redis;
 
@@ -46,5 +47,40 @@ namespace ServiceStack.CacheAccess.Memcached.Tests
 			AssertGetSetIntValue((ICacheClient)client);
 		}
 
+        [Test]
+        public void Can_Store_Complex_Type()
+        {
+            var value = TestType.Create();
+
+            var client = new MemcachedClientCache(TestConfig.MasterHosts);
+            Assert.IsTrue(client.Set("asdf", value));
+            Assert.AreEqual(TestType.Create(), value);
+        }
 	}
+
+    public class TestType
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public DateTime Time { get; set; }
+
+        public static TestType Create()
+        {
+            return new TestType
+                       {
+                            Id = 1,
+                            Text = "some text",
+                            Time = new DateTime(1983, 5, 27, 17, 17, 17)
+                       };
+        }
+
+        public override bool Equals(object obj)
+        {
+            var testType = obj as TestType;
+
+            if (testType == null) return false;
+
+            return Id == testType.Id && Text == testType.Text && Time == testType.Time;
+        }
+    }
 }
