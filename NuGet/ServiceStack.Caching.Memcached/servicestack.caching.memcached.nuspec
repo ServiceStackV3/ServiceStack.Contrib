@@ -2,9 +2,9 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>ServiceStack.Caching.Memcached</id> 
-    <version>3.8.2</version> 
-    <authors>Demis Bellot, ServiceStack contributors</authors> 
-    <owners>Demis Bellot, ServiceStack contributors</owners>
+    <version>3.9.2</version> 
+    <authors>Demis Bellot, Thomas Grassauer and ServiceStack contributors</authors> 
+    <owners>Demis Bellot, Thomas Grassauer and ServiceStack contributors</owners>
     <description>
         An Memcached cache client implementing ServiceStack's ICacheClient:
         https://github.com/ServiceStack/ServiceStack/wiki/Caching
@@ -17,7 +17,8 @@
     <language>en-US</language> 
     <copyright>ServiceStack 2012 and contributors</copyright>
     <dependencies>
-        <dependency id="ServiceStack.Common" />
+      <dependency id="ServiceStack.Common" />
+      <dependency id="EnyimMemcached" />
     </dependencies>
 </metadata>
 </package>

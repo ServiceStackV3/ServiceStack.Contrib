@@ -5,4 +5,4 @@ COPY ..\src\ServiceStack.Authentication.MongoDB\bin\%BUILD%\ServiceStack.Authent
 COPY ..\src\ServiceStack.Authentication.NHibernate\bin\%BUILD%\ServiceStack.Authentication.NHibernate.* ..\NuGet\ServiceStack.Authentication.NHibernate\lib
 COPY ..\src\ServiceStack.CacheAccess.Azure\bin\%BUILD%\ServiceStack.CacheAccess.Azure.* ..\NuGet\ServiceStack.Caching.Azure\lib
 COPY ..\src\ServiceStack.CacheAccess.Memcached\bin\%BUILD%\ServiceStack.CacheAccess.Memcached.* ..\NuGet\ServiceStack.Caching.Memcached\lib
-COPY ..\src\ServiceStack.CacheAccess.Memcached\bin\%BUILD%\Enyim.Caching.* ..\NuGet\ServiceStack.Caching.Memcached\lib
+REM Using EnyimMemcached from NuGet: COPY ..\src\ServiceStack.CacheAccess.Memcached\bin\%BUILD%\Enyim.Caching.* ..\NuGet\ServiceStack.Caching.Memcached\lib
