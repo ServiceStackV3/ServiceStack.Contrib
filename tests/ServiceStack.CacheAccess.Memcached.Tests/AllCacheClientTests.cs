@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Configuration;
+using Enyim.Caching.Configuration;
 using NUnit.Framework;
 using ServiceStack.CacheAccess.Providers;
+using ServiceStack.Logging.Support.Logging;
 using ServiceStack.Redis;
 
 namespace ServiceStack.CacheAccess.Memcached.Tests
@@ -9,16 +12,16 @@ namespace ServiceStack.CacheAccess.Memcached.Tests
 	[Ignore("Ignoring integration tests that require infracture")]
 	public class AllCacheClientTests : AllCacheClientsTestBase
 	{
+        [SetUp]
+        public void Setup()
+        {
+            ServiceStack.Logging.LogManager.LogFactory = new ConsoleLogFactory();
+        } 
+
 		[Test]
 		public void Memory_GetAll_returns_missing_keys()
 		{
 			AssertGetAll(new MemoryCacheClient());
-		}
-
-		[Test]
-		public void Redis_GetAll_returns_missing_keys()
-		{
-			AssertGetAll(new RedisClient(TestConfig.SingleHost));
 		}
 
 		[Test]
@@ -31,12 +34,6 @@ namespace ServiceStack.CacheAccess.Memcached.Tests
 		public void Memory_GetSetIntValue_returns_missing_keys()
 		{
 			AssertGetSetIntValue(new MemoryCacheClient());
-		}
-
-		[Test]
-		public void Redis_GetSetIntValue_returns_missing_keys()
-		{
-			AssertGetSetIntValue(new RedisClient(TestConfig.SingleHost));
 		}
 
 		[Test]
@@ -54,7 +51,24 @@ namespace ServiceStack.CacheAccess.Memcached.Tests
 
             var client = new MemcachedClientCache(TestConfig.MasterHosts);
             Assert.IsTrue(client.Set("asdf", value));
-            Assert.AreEqual(TestType.Create(), value);
+        }
+
+        [Test]
+        public void Can_Store_And_Get_Complex_Type()
+        {
+            var value = TestType.Create();
+
+            var client = new MemcachedClientCache(TestConfig.MasterHosts);
+            Assert.IsTrue(client.Set("asdf", value));
+
+            var target = client.Get<TestType>("asdf");
+            Assert.AreEqual(TestType.Create(), target);
+        }
+
+        [Test]
+        public void Can_create_Instance_using_ConfigurationSection()
+        {
+            var client = new MemcachedClientCache();
         }
 	}
 
