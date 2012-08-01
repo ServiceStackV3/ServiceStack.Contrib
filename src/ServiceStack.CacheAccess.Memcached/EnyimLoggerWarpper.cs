@@ -189,7 +189,7 @@ namespace ServiceStack.CacheAccess.Memcached
 
         public bool IsDebugEnabled
         {
-            get { return true; }
+            get { return _serviceStackLogger.IsDebugEnabled; }
         }
 
         public bool IsInfoEnabled
