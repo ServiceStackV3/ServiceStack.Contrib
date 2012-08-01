@@ -102,10 +102,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnyimLogFactoryWrapper.cs" />
+    <Compile Include="EnyimLoggerWarpper.cs" />
     <Compile Include="MemcachedClientCache.cs" />
     <Compile Include="MemcachedValueWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AdapterBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

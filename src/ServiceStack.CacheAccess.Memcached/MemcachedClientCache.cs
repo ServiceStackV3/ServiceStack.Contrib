@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using Enyim.Caching;
 using Enyim.Caching.Configuration;
 using Enyim.Caching.Memcached;
-using ServiceStack.Common.Extensions;
 using ILog = ServiceStack.Logging.ILog;
 using LogManager = ServiceStack.Logging.LogManager;
 
@@ -17,20 +15,31 @@ namespace ServiceStack.CacheAccess.Memcached
 	/// 
 	/// Basically delegates all calls to Enyim.Caching.MemcachedClient with added diagnostics and logging.
 	/// </summary>
-	public class MemcachedClientCache 
-		: AdapterBase, ICacheClient, IMemcachedClient
+	public class MemcachedClientCache  
+        : ICacheClient, IMemcachedClient
 	{
-		protected override ILog Log { get { return LogManager.GetLogger(GetType()); } }
+		protected ILog Log { get { return LogManager.GetLogger(GetType()); } }
 
 		private MemcachedClient _client;
 
-		public MemcachedClientCache(IEnumerable<string> hosts)
+        /// <summary>
+        /// Initializes the Cache using the default configuration section (enyim/memcached) to configure the memcached client
+        /// </summary>
+        /// <see cref="Enyim.Caching.Configuration.MemcachedClientSection"/>
+        public MemcachedClientCache()
+        {
+            _client = new MemcachedClient();
+        }
+
+        /// <summary>
+        /// Initializes the Cache using the provided hosts to configure the memcached client
+        /// </summary>
+        /// <param name="hosts"></param>
+        public MemcachedClientCache(IEnumerable<string> hosts) 
 		{
 			const int defaultPort = 11211;
 			const int ipAddressIndex = 0;
-			const int portIndex = 1;
-
-			_client = new MemcachedClient();
+		    const int portIndex = 1;
 
 			var ipEndpoints = new List<IPEndPoint>();
 			foreach (var host in hosts)
@@ -51,13 +60,15 @@ namespace ServiceStack.CacheAccess.Memcached
 			LoadClient(ipEndpoints);
 		}
 
-		public MemcachedClientCache(IEnumerable<IPEndPoint> ipEndpoints)
+        public MemcachedClientCache(IEnumerable<IPEndPoint> ipEndpoints)
 		{
 			LoadClient(ipEndpoints);
 		}
 
 		private void LoadClient(IEnumerable<IPEndPoint> ipEndpoints)
 		{
+            Enyim.Caching.LogManager.AssignFactory(new EnyimLogFactoryWrapper());
+
 			var config = new MemcachedClientConfiguration();
 			foreach (var ipEndpoint in ipEndpoints)
 			{
@@ -70,15 +81,6 @@ namespace ServiceStack.CacheAccess.Memcached
 			config.SocketPool.DeadTimeout = new TimeSpan(0, 2, 0);
 
 			_client = new MemcachedClient(config);
-		}
-
-		public MemcachedClientCache(MemcachedClient client)
-		{
-			if (client == null)
-			{
-				throw new ArgumentNullException("client");
-			}
-			_client = client;
 		}
 
 		public void Dispose()
@@ -100,19 +102,17 @@ namespace ServiceStack.CacheAccess.Memcached
 
 		public object Get(string key)
 		{
-			return Execute(() => ((MemcachedValueWrapper)_client.Get(key)).Value);
+		    return Get<object>(key);
 		}
 
 		public object Get(string key, out ulong ucas)
 		{
 			IDictionary<string, ulong> casValues;
-			var results = GetAll(new[] { key }, out casValues);
-
-			object result;
-			if (results.TryGetValue(key, out result))
+		    var result = _client.GetWithCas<MemcachedValueWrapper>(key);
+			if (result.Result != null)
 			{
-				ucas = casValues[key];
-				return result;
+			    ucas = result.Cas;
+				return result.Result;
 			}
 
 			ucas = default(ulong);
@@ -128,22 +128,6 @@ namespace ServiceStack.CacheAccess.Memcached
                                        return (T)result.Value;
                                     return default(T);
                                });
-		}
-
-		public T Get<T>(string key, out ulong ucas)
-		{
-			IDictionary<string, ulong> casValues;
-			var results = GetAll(new[] { key }, out casValues);
-
-			object result;
-			if (results.TryGetValue(key, out result))
-			{
-				ucas = casValues[key];
-				return (T)result;
-			}
-
-			ucas = default(ulong);
-			return default(T);
 		}
 
 		public long Increment(string key, uint amount)
@@ -262,7 +246,7 @@ namespace ServiceStack.CacheAccess.Memcached
 		{
 			foreach (var entry in values)
 			{
-				Set(entry.Key, new MemcachedValueWrapper(entry.Value));
+				Set(entry.Key, entry.Value);
 			}
 		}
 
@@ -304,5 +288,52 @@ namespace ServiceStack.CacheAccess.Memcached
 				}
 			}
 		}
+
+        /// <summary>
+        /// Executes the specified expression. 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="action">The action.</param>
+        /// <returns></returns>
+        private T Execute<T>(Func<T> action)
+        {
+            DateTime before = DateTime.Now;
+            Log.DebugFormat("Executing action '{0}'", action.Method.Name);
+
+            try
+            {
+                T result = action();
+                TimeSpan timeTaken = DateTime.Now - before;
+                Log.DebugFormat("Action '{0}' executed. Took {1} ms.", action.Method.Name, timeTaken.TotalMilliseconds);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorFormat("There was an error executing Action '{0}'. Message: {1}", action.Method.Name, ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Executes the specified action (for void methods).
+        /// </summary>
+        /// <param name="action">The action.</param>
+        private void Execute(Action action)
+        {
+            DateTime before = DateTime.Now;
+            Log.DebugFormat("Executing action '{0}'", action.Method.Name);
+
+            try
+            {
+                action();
+                TimeSpan timeTaken = DateTime.Now - before;
+                Log.DebugFormat("Action '{0}' executed. Took {1} ms.", action.Method.Name, timeTaken.TotalMilliseconds);
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorFormat("There was an error executing Action '{0}'. Message: {1}", action.Method.Name, ex.Message);
+                throw;
+            }
+        }
 	}
 }
