@@ -55,9 +55,23 @@ namespace ServiceStack.ServiceInterface.Auth
 		public MongoDBAuthRepository(MongoDatabase mongoDatabase)
 		{
 			this.mongoDatabase = mongoDatabase;
+
+			if (!CollectionsExists())
+			{
+				throw new InvalidOperationException("One of the collections needed by MongoDBAuthRepository is missing." +
+													"You can call CreateMissingCollections or DropAndReCreateCollections " +
+													"to create the needed collections.");
+			}
+		}
+		public bool CollectionsExists()
+		{
+				return (mongoDatabase.CollectionExists(UserAuth_Col))
+						&& (mongoDatabase.CollectionExists(UserOAuthProvider_Col))
+						&& (mongoDatabase.CollectionExists(Counters_Col));
+
 		}
 
-		public void CreateMissingTables()
+		public void CreateMissingCollections()
 		{
 			if (!mongoDatabase.CollectionExists(UserAuth_Col))
 				mongoDatabase.CreateCollection(UserAuth_Col);
@@ -75,7 +89,7 @@ namespace ServiceStack.ServiceInterface.Auth
 			}
 		}
 
-		public void DropAndReCreateTables()
+		public void DropAndReCreateCollections()
 		{
 			if (mongoDatabase.CollectionExists(UserAuth_Col))
 				mongoDatabase.DropCollection(UserAuth_Col);
@@ -86,7 +100,7 @@ namespace ServiceStack.ServiceInterface.Auth
 			if (mongoDatabase.CollectionExists(Counters_Col))
 				mongoDatabase.DropCollection(Counters_Col);
 
-			CreateMissingTables();
+			CreateMissingCollections();
 		}
 
 		private void ValidateNewUser(UserAuth newUser, string password)
@@ -398,7 +412,7 @@ namespace ServiceStack.ServiceInterface.Auth
 
 		public void Clear()
 		{
-			DropAndReCreateTables();
+			DropAndReCreateCollections();
 		}
 	}
 }
