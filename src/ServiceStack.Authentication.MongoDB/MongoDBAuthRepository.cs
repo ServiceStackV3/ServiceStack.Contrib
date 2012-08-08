@@ -52,14 +52,19 @@ namespace ServiceStack.ServiceInterface.Auth
 			}
 		}
 
-		public MongoDBAuthRepository(MongoDatabase mongoDatabase)
+		public MongoDBAuthRepository(MongoDatabase mongoDatabase, bool createMissingCollections)
 		{
 			this.mongoDatabase = mongoDatabase;
+
+			if (createMissingCollections)
+			{
+				CreateMissingCollections();
+			}
 
 			if (!CollectionsExists())
 			{
 				throw new InvalidOperationException("One of the collections needed by MongoDBAuthRepository is missing." +
-													"You can call CreateMissingCollections or DropAndReCreateCollections " +
+													"You can call MongoDBAuthRepository constructor with the parameter CreateMissingCollections set to 'true'  " +
 													"to create the needed collections.");
 			}
 		}
