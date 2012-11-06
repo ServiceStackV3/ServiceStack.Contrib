@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1CA66D0F-9000-4AB6-A71A-4E64F1A391B8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Compression", "ServiceStack.Compression\ServiceStack.Compression.csproj", "{EC12FEF4-E335-4C9D-9AA0-764A2203C26F}"
@@ -23,6 +23,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Memcached", "ServiceStack.CacheAccess.Memcached\ServiceStack.CacheAccess.Memcached.csproj", "{600612F3-15B4-45B5-9D39-06FA016B81C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Azure", "ServiceStack.CacheAccess.Azure\ServiceStack.CacheAccess.Azure.csproj", "{08840867-041E-46A2-97C3-EA223161D942}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.AwsDynamoDb", "ServiceStack.CacheAccess.AwsDynamoDb\ServiceStack.CacheAccess.AwsDynamoDb.csproj", "{29C23E7D-F41E-42DD-8426-9B5254840450}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.AwsDynamoDb.Tests", "ServiceStack.CacheAccess.AwsDynamoDb.Tests\ServiceStack.CacheAccess.AwsDynamoDb.Tests.csproj", "{27217138-EA6A-466F-83D4-A4585C921781}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,11 +84,28 @@ Global
 		{08840867-041E-46A2-97C3-EA223161D942}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08840867-041E-46A2-97C3-EA223161D942}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Release|Any CPU
 		{08840867-041E-46A2-97C3-EA223161D942}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Release|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.MonoTouch|Any CPU.ActiveCfg = Release|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.MonoTouch|Any CPU.Build.0 = Release|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Release|Any CPU
+		{29C23E7D-F41E-42DD-8426-9B5254840450}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Release|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.MonoTouch|Any CPU.ActiveCfg = Release|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.MonoTouch|Any CPU.Build.0 = Release|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.ActiveCfg = Release|Any CPU
+		{27217138-EA6A-466F-83D4-A4585C921781}.STATIC_ONLY NO_EXPRESSIONS|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3EEF88B9-14A0-466D-B364-24D5D0E9BE75} = {1CA66D0F-9000-4AB6-A71A-4E64F1A391B8}
+		{27217138-EA6A-466F-83D4-A4585C921781} = {1CA66D0F-9000-4AB6-A71A-4E64F1A391B8}
 	EndGlobalSection
 EndGlobal
