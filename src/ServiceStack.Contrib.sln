@@ -26,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Az
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.AwsDynamoDb", "ServiceStack.CacheAccess.AwsDynamoDb\ServiceStack.CacheAccess.AwsDynamoDb.csproj", "{29C23E7D-F41E-42DD-8426-9B5254840450}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.AwsDynamoDb.Tests", "ServiceStack.CacheAccess.AwsDynamoDb.Tests\ServiceStack.CacheAccess.AwsDynamoDb.Tests.csproj", "{27217138-EA6A-466F-83D4-A4585C921781}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.AwsDynamoDb.Tests", "..\tests\ServiceStack.CacheAccess.AwsDynamoDb.Tests\ServiceStack.CacheAccess.AwsDynamoDb.Tests.csproj", "{27217138-EA6A-466F-83D4-A4585C921781}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

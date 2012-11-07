@@ -53,7 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ServiceStack.CacheAccess.AwsDynamoDb\ServiceStack.CacheAccess.AwsDynamoDb.csproj">
+    <ProjectReference Include="..\..\src\ServiceStack.CacheAccess.AwsDynamoDb\ServiceStack.CacheAccess.AwsDynamoDb.csproj">
       <Project>{29c23e7d-f41e-42dd-8426-9b5254840450}</Project>
       <Name>ServiceStack.CacheAccess.AwsDynamoDb</Name>
     </ProjectReference>
