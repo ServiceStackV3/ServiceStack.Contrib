@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="AllCacheClientsTestBase.cs" />
     <Compile Include="AllCacheClientTests.cs" />
+    <Compile Include="MemoryCacheClientTests.cs" />
     <Compile Include="ModelWithIdAndName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
