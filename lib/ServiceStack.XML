@@ -48,6 +48,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="P:ServiceStack.Markdown.MarkdownViewBase.ViewEngine">
+            <summary>
+            Reference to MarkdownViewEngine
+            </summary>
+        </member>
         <member name="P:ServiceStack.Markdown.MarkdownViewBase.AppHost">
             <summary>
             The AppHost so you can access configuration and resolve dependencies, etc.
@@ -115,6 +120,27 @@
             Provide for quick lookups based on hashes that can be determined from a request url
             </summary>
         </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.CacheClientExtensions.RemoveByPattern(ServiceStack.CacheAccess.ICacheClient,System.String)">
+            <summary>
+            Removes items from cache that have keys matching the specified wildcard pattern
+            </summary>
+            <param name="cacheClient">Cache client</param>
+            <param name="pattern">The wildcard, where "*" means any sequence of characters and "?" means any single character.</param>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.CacheClientExtensions.RemoveByRegex(ServiceStack.CacheAccess.ICacheClient,System.String)">
+            <summary>
+            Removes items from the cache based on the specified regular expression pattern
+            </summary>
+            <param name="cacheClient">Cache client</param>
+            <param name="regex">Regular expression pattern to search cache keys</param>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.EndpointHost.ApplyPreRequestFilters(ServiceStack.ServiceHost.IHttpRequest,ServiceStack.ServiceHost.IHttpResponse)">
+            <summary>
+            Applies the raw request filters. Returns whether or not the request has been handled 
+            and no more processing should be done.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ServiceStack.WebHost.Endpoints.EndpointHost.ApplyRequestFilters(ServiceStack.ServiceHost.IHttpRequest,ServiceStack.ServiceHost.IHttpResponse,System.Object)">
             <summary>
             Applies the request filters. Returns whether or not the request has been handled 
@@ -132,6 +158,11 @@
         <member name="M:ServiceStack.WebHost.Endpoints.EndpointHost.CompleteRequest">
             <summary>
             Call to signal the completion of a ServiceStack-handled Request
+            </summary>
+        </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.EndpointHost.Container">
+            <summary>
+            The AppHost.Container. Note: it is not thread safe to register dependencies after AppStart.
             </summary>
         </member>
         <member name="T:ServiceStack.WebHost.Endpoints.AppHostHttpListenerBase">
@@ -194,9 +225,24 @@
             </summary>
             <param name="plugins"></param>
         </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.IAppHost.CreateServiceRunner``1(ServiceStack.WebHost.Endpoints.ActionContext)">
+            <summary>
+            Create a service runner for IService actions
+            </summary>
+        </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.Routes">
+            <summary>
+            Register user-defined custom routes.
+            </summary>
+        </member>
         <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.ContentTypeFilters">
             <summary>
             Register custom ContentType serializers
+            </summary>
+        </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.PreRequestFilters">
+            <summary>
+            Add Request Filters, to be applied before the dto is deserialized
             </summary>
         </member>
         <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.RequestFilters">
@@ -209,9 +255,19 @@
             Add Response Filters
             </summary>
         </member>
-        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.HtmlProviders">
+        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.ViewEngines">
             <summary>
             Add alternative HTML View Engines
+            </summary>
+        </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.ExceptionHandler">
+            <summary>
+            Provide an exception handler for un-caught exceptions
+            </summary>
+        </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.ServiceExceptionHandler">
+            <summary>
+            Provide an exception handler for unhandled exceptions
             </summary>
         </member>
         <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.CatchAllHandlers">
@@ -229,6 +285,16 @@
             The AppHost config
             </summary>
         </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.Plugins">
+            <summary>
+            List of pre-registered and user-defined plugins to be enabled in this AppHost
+            </summary>
+        </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.IAppHost.VirtualPathProvider">
+            <summary>
+            Virtual access to file resources
+            </summary>
+        </member>
         <member name="M:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Start(System.String)">
             <summary>
             Starts the Web Service
@@ -236,7 +302,7 @@
             <param name="urlBase">
             A Uri that acts as the base that the server is listening on.
             Format should be: http://127.0.0.1:8080/ or http://127.0.0.1:8080/somevirtual/
-            Note: the trailing backslash is required! For more info see the
+            Note: the trailing slash is required! For more info see the
             HttpListener.Prefixes property on MSDN.
             </param>
         </member>
@@ -250,6 +316,9 @@
             Overridable method that can be used to implement a custom hnandler
             </summary>
             <param name="context"></param>
+        </member>
+        <member name="P:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Plugins">
+            TODO: plugin added with .Add method after host initialization won't be configured. Each plugin should have state so we can invoke Register method if host was already started.  
         </member>
         <member name="T:ServiceStack.Properties.Resources">
             <summary>
@@ -457,11 +526,6 @@
             then convert it to structurally valid XHTML (or HTML).
             </summary>
         </member>
-        <member name="F:MarkdownSharp.Markdown._nestDepth">
-            <summary>
-            maximum nested depth of [] and () supported by the transform; implementation detail
-            </summary>
-        </member>
         <member name="F:MarkdownSharp.Markdown._tabWidth">
             <summary>
             Tabs are automatically converted to spaces as part of the transform  
@@ -490,6 +554,11 @@
         <member name="M:MarkdownSharp.Markdown.#ctor(MarkdownSharp.MarkdownOptions)">
             <summary>
             Create a new Markdown instance and set the options from the MarkdownOptions object.
+            </summary>
+        </member>
+        <member name="F:MarkdownSharp.Markdown._nestDepth">
+            <summary>
+            maximum nested depth of [] and () supported by the transform; implementation detail
             </summary>
         </member>
         <member name="M:MarkdownSharp.Markdown.#cctor">
@@ -1083,13 +1152,14 @@
             This will be made private; use <see cref="P:ServiceStack.MiniProfiler.Data.ProfiledDbConnection.Profiler"/>
             </summary>
         </member>
-        <member name="M:ServiceStack.MiniProfiler.Data.ProfiledDbConnection.#ctor(System.Data.Common.DbConnection,ServiceStack.MiniProfiler.Data.IDbProfiler)">
+        <member name="M:ServiceStack.MiniProfiler.Data.ProfiledDbConnection.#ctor(System.Data.Common.DbConnection,ServiceStack.MiniProfiler.Data.IDbProfiler,System.Boolean)">
             <summary>
             Returns a new <see cref="T:ServiceStack.MiniProfiler.Data.ProfiledDbConnection"/> that wraps <paramref name="connection"/>, 
             providing query execution profiling.  If profiler is null, no profiling will occur.
             </summary>
             <param name="connection">Your provider-specific flavor of connection, e.g. SqlConnection, OracleConnection</param>
             <param name="profiler">The currently started <see cref="T:ServiceStack.MiniProfiler.Profiler"/> or null.</param>
+            <param name="autoDisposeConnection">Determines whether the ProfiledDbConnection will dispose the underlying connection.</param>
         </member>
         <member name="P:ServiceStack.MiniProfiler.Data.ProfiledDbConnection.InnerConnection">
             <summary>
@@ -1268,6 +1338,16 @@
             <summary>
             Use this to treat Request.Items[] as a cache by returning pre-computed items to save 
             calculating them multiple times.
+            </summary>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.Extensions.HttpRequestExtensions.SetItem(ServiceStack.ServiceHost.IHttpRequest,System.String,System.Object)">
+            <summary>
+            Store an entry in the IHttpRequest.Items Dictionary
+            </summary>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.Extensions.HttpRequestExtensions.GetItem(ServiceStack.ServiceHost.IHttpRequest,System.String)">
+            <summary>
+            Get an entry from the IHttpRequest.Items Dictionary
             </summary>
         </member>
         <member name="T:ServiceStack.MiniProfiler.SqlTiming">
@@ -2813,11 +2893,35 @@
             </summary>
             <param name="serviceTypes"></param>
         </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.AppHostHttpListenerLongRunningBase.Start(System.String)">
+            <summary>
+            Starts the Web Service
+            </summary>
+            <param name="urlBase">
+            A Uri that acts as the base that the server is listening on.
+            Format should be: http://127.0.0.1:8080/ or http://127.0.0.1:8080/somevirtual/
+            Note: the trailing slash is required! For more info see the
+            HttpListener.Prefixes property on MSDN.
+            </param>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.AppHostHttpListenerLongRunningBase.ThreadPoolManager.Dispose">
+            <summary>
+            Exécute les tâches définies par l'application associées à la libération ou à la redéfinition des ressources non managées.
+            </summary>
+            <filterpriority>2</filterpriority>
+        </member>
         <member name="T:ServiceStack.WebHost.Endpoints.AppHostBase">
             <summary>
             Inherit from this class if you want to host your web services inside an
             ASP.NET application.
             </summary>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.AppHostBase.Resolve``1">
+            <summary>
+            Resolves from IoC container a specified type instance.
+            </summary>
+            <typeparam name="T">Type to be resolved.</typeparam>
+            <returns>Instance of <typeparamref name="T"/>.</returns>
         </member>
         <member name="T:ServiceStack.MiniProfiler.Data.ExecuteType">
             <summary>
@@ -2872,6 +2976,47 @@
             </summary>
             <param name="defaultFilePath"></param>
         </member>
+        <member name="F:ServiceStack.ServiceHost.DtoUtils.ResponseStatusPropertyName">
+            <summary>
+            Naming convention for the ResponseStatus property name on the response DTO
+            </summary>
+        </member>
+        <member name="F:ServiceStack.ServiceHost.DtoUtils.UrnServiceErrorType">
+            <summary>
+            Service error logs are kept in 'urn:ServiceErrors:{ServiceName}'
+            </summary>
+        </member>
+        <member name="F:ServiceStack.ServiceHost.DtoUtils.CombinedServiceLogId">
+            <summary>
+            Combined service error logs are maintained in 'urn:ServiceErrors:All'
+            </summary>
+        </member>
+        <member name="M:ServiceStack.ServiceHost.DtoUtils.CreateResponseDto(System.Object,ServiceStack.ServiceInterface.ServiceModel.ResponseStatus)">
+            <summary>
+            Create an instance of the service response dto type and inject it with the supplied responseStatus
+            </summary>
+            <param name="request"></param>
+            <param name="responseStatus"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ServiceStack.ServiceHost.DtoUtils.CreateResponseStatus(System.String,System.String,System.Collections.Generic.IEnumerable{ServiceStack.Validation.ValidationErrorField})">
+            <summary>
+            Creates the error response from the values provided.
+            
+            If the errorCode is empty it will use the first validation error code, 
+            if there is none it will throw an error.
+            </summary>
+            <param name="errorCode">The error code.</param>
+            <param name="errorMessage">The error message.</param>
+            <param name="validationErrors">The validation errors.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ServiceStack.ServiceHost.DtoUtils.GetRequestErrorBody(System.Object)">
+            <summary>
+            Override to provide additional/less context about the Service Exception. 
+            By default the request is serialized and appended to the ResponseStatus StackTrace.
+            </summary>
+        </member>
         <member name="T:ServiceStack.MiniProfiler.SqlTimingParameter">
             <summary>
             Information about a DbParameter used in the sql statement profiled by SqlTiming.
@@ -2912,13 +3057,38 @@
             How large the type is, e.g. for string, size could be 4000
             </summary>
         </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheAdd(System.String,System.Object)">
+            <summary>
+            Add value with specified key to the cache, and set the cache entry to never expire.
+            </summary>
+            <param name="key">Key associated with value.</param>
+            <param name="value">Value being cached.</param>
+            <returns></returns>
+        </member>
         <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheAdd(System.String,System.Object,System.DateTime)">
             <summary>
             Stores The value with key only if such key doesn't exist at the server yet. 
             </summary>
             <param name="key">The key.</param>
             <param name="value">The value.</param>
-            <param name="expiresAt">The expires at.</param>
+            <param name="expiresAt">The UTC DateTime at which the cache entry expires.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheSet(System.String,System.Object)">
+            <summary>
+            Adds or replaces the value with key, and sets the cache entry to never expire.
+            </summary>
+            <param name="key">The key.</param>
+            <param name="value">The value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheSet(System.String,System.Object,System.DateTime)">
+            <summary>
+            Adds or replaces the value with key.
+            </summary>
+            <param name="key">The key.</param>
+            <param name="value">The value.</param>
+            <param name="expiresAt">The UTC DateTime at which the cache entry expires.</param>
             <returns></returns>
         </member>
         <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheSet(System.String,System.Object,System.DateTime,System.Nullable{System.Int64})">
@@ -2927,9 +3097,126 @@
             </summary>
             <param name="key">The key.</param>
             <param name="value">The value.</param>
-            <param name="expiresAt">The expires at.</param>
+            <param name="expiresAt">The UTC DateTime at which the cache entry expires.</param>
             <param name="checkLastModified">The check last modified.</param>
             <returns>True; if it succeeded</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheReplace(System.String,System.Object)">
+            <summary>
+            Replace the value with specified key if it exists, and set the cache entry to never expire.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value to be cached.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheReplace(System.String,System.Object,System.DateTime)">
+            <summary>
+            Replace the value with specified key if it exists.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value to be cached.</param>
+            <param name="expiresAt">The UTC DateTime at which the cache entry expires.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Add``1(System.String,``0)">
+            <summary>
+            Add the value with key to the cache, set to never expire.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <returns>True if Add succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Set``1(System.String,``0)">
+            <summary>
+            Add or replace the value with key to the cache, set to never expire.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <returns>True if Set succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Replace``1(System.String,``0)">
+            <summary>
+            Replace the value with key in the cache, set to never expire.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <returns>True if Replace succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Add``1(System.String,``0,System.DateTime)">
+            <summary>
+            Add the value with key to the cache, set to expire at specified DateTime.
+            </summary>
+            <remarks>This method examines the DateTimeKind of expiresAt to determine if conversion to
+            universal time is needed. The version of Add that takes a TimeSpan expiration is faster 
+            than using this method with a DateTime of Kind other than Utc, and is not affected by 
+            ambiguous local time during daylight savings/standard time transition.</remarks>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <param name="expiresAt">The DateTime at which the cache entry expires.</param>
+            <returns>True if Add succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Set``1(System.String,``0,System.DateTime)">
+            <summary>
+            Add or replace the value with key to the cache, set to expire at specified DateTime.
+            </summary>
+            <remarks>This method examines the DateTimeKind of expiresAt to determine if conversion to
+            universal time is needed. The version of Set that takes a TimeSpan expiration is faster 
+            than using this method with a DateTime of Kind other than Utc, and is not affected by 
+            ambiguous local time during daylight savings/standard time transition.</remarks>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <param name="expiresAt">The DateTime at which the cache entry expires.</param>
+            <returns>True if Set succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Replace``1(System.String,``0,System.DateTime)">
+            <summary>
+            Replace the value with key in the cache, set to expire at specified DateTime.
+            </summary>
+            <remarks>This method examines the DateTimeKind of expiresAt to determine if conversion to
+            universal time is needed. The version of Replace that takes a TimeSpan expiration is faster 
+            than using this method with a DateTime of Kind other than Utc, and is not affected by 
+            ambiguous local time during daylight savings/standard time transition.</remarks>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <param name="expiresAt">The DateTime at which the cache entry expires.</param>
+            <returns>True if Replace succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Add``1(System.String,``0,System.TimeSpan)">
+            <summary>
+            Add the value with key to the cache, set to expire after specified TimeSpan.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <param name="expiresIn">The TimeSpan at which the cache entry expires.</param>
+            <returns>True if Add succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Set``1(System.String,``0,System.TimeSpan)">
+            <summary>
+            Add or replace the value with key to the cache, set to expire after specified TimeSpan.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <param name="expiresIn">The TimeSpan at which the cache entry expires.</param>
+            <returns>True if Set succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.Replace``1(System.String,``0,System.TimeSpan)">
+            <summary>
+            Replace the value with key in the cache, set to expire after specified TimeSpan.
+            </summary>
+            <param name="key">The key of the cache entry.</param>
+            <param name="value">The value being cached.</param>
+            <param name="expiresIn">The TimeSpan at which the cache entry expires.</param>
+            <returns>True if Replace succeeds, otherwise false.</returns>
+        </member>
+        <member name="M:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheEntry.#ctor(System.Object,System.DateTime)">
+            <summary>
+            Create new instance of CacheEntry.
+            </summary>
+            <param name="value">The value being cached.</param>
+            <param name="expiresAt">The UTC time at which CacheEntry expires.</param>
+        </member>
+        <member name="P:ServiceStack.CacheAccess.Providers.MemoryCacheClient.CacheEntry.ExpiresAt">
+            <summary>UTC time at which CacheEntry expires.</summary>
         </member>
         <member name="M:ServiceStack.WebHost.Endpoints.Extensions.HttpResponseExtensions.WriteToResponse(ServiceStack.ServiceHost.IHttpResponse,System.Object,ServiceStack.ServiceHost.ResponseSerializerDelegate,ServiceStack.ServiceHost.IRequestContext,System.Byte[],System.Byte[])">
             <summary>
@@ -2952,6 +3239,16 @@
         <member name="T:ServiceStack.ServiceHost.ServiceControllerReflection">
             <summary>
             Keeping around just to compare how slow it is
+            </summary>
+        </member>
+        <member name="T:ServiceStack.WebHost.Endpoints.ActionContext">
+            <summary>
+            Context to capture IService action
+            </summary>
+        </member>
+        <member name="T:ServiceStack.VirtualPath.InMemoryVirtualPathProvider">
+            <summary>
+            In Memory repository for files. Useful for testing.
             </summary>
         </member>
         <member name="T:ServiceStack.MiniProfiler.Helpers.ExtensionMethods">
