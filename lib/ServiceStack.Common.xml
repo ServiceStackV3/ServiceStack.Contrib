@@ -101,6 +101,18 @@
             leaving the implmentation in the 'Extensions' sub-namespace to force explicit opt-in
             </summary>
         </member>
+        <member name="M:ServiceStack.Common.Utils.ResponseStatusUtils.CreateResponseStatus(System.String,System.String,System.Collections.Generic.IEnumerable{ServiceStack.Validation.ValidationErrorField})">
+            <summary>
+            Creates the error response from the values provided.
+            
+            If the errorCode is empty it will use the first validation error code, 
+            if there is none it will throw an error.
+            </summary>
+            <param name="errorCode">The error code.</param>
+            <param name="errorMessage">The error message.</param>
+            <param name="validationErrors">The validation errors.</param>
+            <returns></returns>
+        </member>
         <member name="T:ServiceStack.ServiceClient.Web.ServiceClientBase">
             Need to provide async request options
             http://msdn.microsoft.com/en-us/library/86wf6409(VS.71).aspx
@@ -132,6 +144,21 @@
             <param name="baseUri">Base URI of the service</param>
             <param name="format">Override of the Format property for the service</param>
         </member>
+        <member name="F:ServiceStack.ServiceClient.Web.ServiceClientBase.disableAutoCompression">
+            <summary>
+            Whether to Accept Gzip,Deflate Content-Encoding and to auto decompress responses
+            </summary>
+        </member>
+        <member name="F:ServiceStack.ServiceClient.Web.ServiceClientBase.username">
+            <summary>
+            The user name for basic authentication
+            </summary>
+        </member>
+        <member name="F:ServiceStack.ServiceClient.Web.ServiceClientBase.password">
+            <summary>
+            The password for basic authentication
+            </summary>
+        </member>
         <member name="M:ServiceStack.ServiceClient.Web.ServiceClientBase.SetCredentials(System.String,System.String)">
             <summary>
             Sets the username and the password for basic authentication.
@@ -140,21 +167,6 @@
         <member name="F:ServiceStack.ServiceClient.Web.ServiceClientBase.storeCookies">
             <summary>
             Specifies if cookies should be stored
-            </summary>
-        </member>
-        <member name="P:ServiceStack.ServiceClient.Web.ServiceClientBase.DisableAutoCompression">
-            <summary>
-            Whether to Accept Gzip,Deflate Content-Encoding and to auto decompress responses
-            </summary>
-        </member>
-        <member name="P:ServiceStack.ServiceClient.Web.ServiceClientBase.UserName">
-            <summary>
-            The user name for basic authentication
-            </summary>
-        </member>
-        <member name="P:ServiceStack.ServiceClient.Web.ServiceClientBase.Password">
-            <summary>
-            The password for basic authentication
             </summary>
         </member>
         <member name="P:ServiceStack.ServiceClient.Web.ServiceClientBase.Credentials">
