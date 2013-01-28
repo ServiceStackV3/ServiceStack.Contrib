@@ -273,7 +273,7 @@
             Exclude specific properties of this type from being serialized
             </summary>
         </member>
-        <member name="P:ServiceStack.Text.JsConfig`1.TreatValueAsRefTypes">
+        <member name="P:ServiceStack.Text.JsConfig`1.TreatValueAsRefType">
             <summary>
             Opt-in flag to set some Value Types to be treated as a Ref Type
             </summary>
