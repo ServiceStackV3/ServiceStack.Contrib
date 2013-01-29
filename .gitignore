@@ -35,3 +35,9 @@ App_Data/
 *.resharper.user
 *.suo
 *.user
+
+# NCrunch
+
+*.ncrunch*
+
+.*crunch*.local.xml
