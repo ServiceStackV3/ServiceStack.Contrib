@@ -2,7 +2,7 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>ServiceStack.Caching.Memcached</id> 
-    <version>3.9.32</version> 
+    <version>3.9.34</version> 
     <authors>Demis Bellot, Thomas Grassauer and ServiceStack contributors</authors> 
     <owners>Demis Bellot, Thomas Grassauer and ServiceStack contributors</owners>
     <description>
@@ -15,7 +15,7 @@
     <iconUrl>http://www.servicestack.net/logo-100x100.png</iconUrl>
     <tags>ServiceStack Authentication Authorization NHibernate SQLServer Sqlite Oracle MySql PostgreSQL POCO Code-First</tags>
     <language>en-US</language> 
-    <copyright>ServiceStack 2012 and contributors</copyright>
+    <copyright>ServiceStack 2013 and contributors</copyright>
     <dependencies>
       <dependency id="ServiceStack.Common" />
       <dependency id="EnyimMemcached" />

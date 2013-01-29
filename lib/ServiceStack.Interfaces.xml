@@ -248,6 +248,11 @@
             Attach any data to this request that all filters and services can access.
             </summary>
         </member>
+        <member name="P:ServiceStack.ServiceHost.IHttpRequest.UseBufferedStream">
+            <summary>
+            Buffer the Request InputStream so it can be re-read
+            </summary>
+        </member>
         <member name="P:ServiceStack.ServiceHost.IHttpRequest.UserHostAddress">
             <summary>
             The Remote Ip as reported by Request.UserHostAddress
@@ -338,6 +343,11 @@
         <member name="P:ServiceStack.ServiceHost.IRequestLogger.EnableSessionTracking">
             <summary>
             Turn On/Off Session Tracking
+            </summary>
+        </member>
+        <member name="P:ServiceStack.ServiceHost.IRequestLogger.EnableRequestBodyTracking">
+            <summary>
+            Turn On/Off Raw Request Body Tracking
             </summary>
         </member>
         <member name="P:ServiceStack.ServiceHost.IRequestLogger.EnableResponseTracking">

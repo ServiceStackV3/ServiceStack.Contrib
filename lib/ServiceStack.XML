@@ -317,6 +317,20 @@
             </summary>
             <param name="context"></param>
         </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Resolve``1">
+            <summary>
+            Resolves from IoC container a specified type instance.
+            </summary>
+            <typeparam name="T">Type to be resolved.</typeparam>
+            <returns>Instance of <typeparamref name="T"/>.</returns>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.ResolveService``1(System.Net.HttpListenerContext)">
+            <summary>
+            Resolves and auto-wires a ServiceStack Service
+            </summary>
+            <typeparam name="T">Type to be resolved.</typeparam>
+            <returns>Instance of <typeparamref name="T"/>.</returns>
+        </member>
         <member name="P:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Plugins">
             TODO: plugin added with .Add method after host initialization won't be configured. Each plugin should have state so we can invoke Register method if host was already started.  
         </member>
@@ -1845,13 +1859,13 @@
             <summary>
             When <see cref="M:ServiceStack.MiniProfiler.Profiler.Start(ServiceStack.MiniProfiler.ProfileLevel)"/> is called, if the current request url contains any items in this property,
             no profiler will be instantiated and no results will be displayed.
-            Default value is { "/ss-", "/content/", "/scripts/", "/favicon.ico" }.
+            Default value is { "/ssr-", "/content/", "/scripts/", "/favicon.ico" }.
             </summary>
         </member>
         <member name="P:ServiceStack.MiniProfiler.Profiler.Settings.RouteBasePath">
             <summary>
             The path under which ALL routes are registered in, defaults to the application root.  For example, "~/myDirectory/" would yield
-            "/myDirectory/ss-includes.js" rather than just "/mini-profiler-includes.js"
+            "/myDirectory/ssr-includes.js" rather than just "/mini-profiler-includes.js"
             Any setting here should be in APP RELATIVE FORM, e.g. "~/myDirectory/"
             </summary>
         </member>
@@ -2929,6 +2943,13 @@
         <member name="M:ServiceStack.WebHost.Endpoints.AppHostBase.Resolve``1">
             <summary>
             Resolves from IoC container a specified type instance.
+            </summary>
+            <typeparam name="T">Type to be resolved.</typeparam>
+            <returns>Instance of <typeparamref name="T"/>.</returns>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.AppHostBase.ResolveService``1(System.Web.HttpContext)">
+            <summary>
+            Resolves and auto-wires a ServiceStack Service
             </summary>
             <typeparam name="T">Type to be resolved.</typeparam>
             <returns>Instance of <typeparamref name="T"/>.</returns>
