@@ -15,11 +15,26 @@ namespace ServiceStack.Authentication.Raven
 		//http://stackoverflow.com/questions/3588623/c-sharp-regex-for-a-username-with-a-few-restrictions
 		public Regex ValidUserNameRegEx = new Regex(@"^(?=.{3,15}$)([A-Za-z0-9][._-]?)*$", RegexOptions.Compiled);
 
-		private IDocumentStore _documentStore;
+		private readonly IDocumentStore _documentStore;
+	    private static bool _isInitialized = false;
+
+        public static void CreateOrUpdateUserAuthIndex(IDocumentStore store)
+        {
+            // put this index into the ravendb database
+            new ServiceStack_UserAuth_ByUserNameOrEmail().Execute(store);
+            new ServiceStack_UserAuth_ByOAuthProvider().Execute(store);
+            _isInitialized = true;
+        }
 
 		public RavenUserAuthRepository(IDocumentStore documentStore)
 		{
 			_documentStore = documentStore;
+         
+            // if the user didn't call this method in their AppHostBase
+            // Let's call if for them. No worries if this is called a few
+            // times, we just don't want it running all the time
+            if (!_isInitialized) 
+                CreateOrUpdateUserAuthIndex(documentStore);
 		}
 
 		private void ValidateNewUser(UserAuth newUser, string password)
@@ -119,15 +134,15 @@ namespace ServiceStack.Authentication.Raven
 
 		public UserAuth GetUserAuthByUserName(string userNameOrEmail)
 		{
-			using (var session = _documentStore.OpenSession())
-			{
-				var isEmail = userNameOrEmail.Contains("@");
-				var userAuth = isEmail
-					? session.Query<UserAuth>().FirstOrDefault(q => q.Email == userNameOrEmail)
-					: session.Query<UserAuth>().FirstOrDefault(q => q.UserName == userNameOrEmail);
-				
-				return userAuth;
-			}
+            using (var session = _documentStore.OpenSession())
+            {
+                var userAuth = session.Query<ServiceStack_UserAuth_ByUserNameOrEmail.Result, ServiceStack_UserAuth_ByUserNameOrEmail>()
+                       .Search(x => x.Search, userNameOrEmail)
+                       .OfType<UserAuth>()
+                       .FirstOrDefault();
+
+                return userAuth;
+            }
 		}
 
 		public bool TryAuthenticate(string userName, string password, out UserAuth userAuth)
@@ -231,7 +246,11 @@ namespace ServiceStack.Authentication.Raven
 			using (var session = _documentStore.OpenSession())
 			{
 				var id = int.Parse(userAuthId);
-				return session.Query<UserOAuthProvider>().Where(q => q.UserAuthId == id).OrderBy(x => x.ModifiedDate).ToList();
+				return session.Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
+                    .Where(q => q.UserAuthId == id)
+                    .OrderBy(x => x.ModifiedDate)
+                    .OfType<UserOAuthProvider>()
+                    .ToList();
 			}
 		}
 
@@ -253,9 +272,11 @@ namespace ServiceStack.Authentication.Raven
 
 			using (var session = _documentStore.OpenSession())
 			{
-				var oAuthProvider = session
-					.Query<UserOAuthProvider>()
-					.FirstOrDefault<UserOAuthProvider>(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId);
+			    var oAuthProvider = session
+			        .Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
+			        .Where(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId)
+                    .OfType<UserOAuthProvider>()
+			        .FirstOrDefault();
 
 				if (oAuthProvider != null)
 				{
@@ -272,7 +293,11 @@ namespace ServiceStack.Authentication.Raven
 
 			using (var session = _documentStore.OpenSession())
 			{
-				var oAuthProvider = session.Query<UserOAuthProvider>().FirstOrDefault(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId);
+                var oAuthProvider = session
+                    .Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
+                    .Where(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId)
+                    .OfType<UserOAuthProvider>()
+                    .FirstOrDefault();
 
 				if (oAuthProvider == null)
 				{
