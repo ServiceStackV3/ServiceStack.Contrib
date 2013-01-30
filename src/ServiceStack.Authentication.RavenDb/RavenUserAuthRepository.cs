@@ -8,7 +8,7 @@ using ServiceStack.Common;
 using ServiceStack.ServiceInterface.Auth;
 using ServiceStack.Text;
 
-namespace ServiceStack.Authentication.Raven
+namespace ServiceStack.Authentication.RavenDb
 {
 	public class RavenUserAuthRepository : IUserAuthRepository
 	{
