@@ -12,7 +12,7 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
 {
     public class DynamoDbCacheClient : ICacheClient
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (DynamoDbCacheClient));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(DynamoDbCacheClient));
 
         private AmazonDynamoDBClient _client;
         private Table _awsCacheTableObj;
@@ -91,7 +91,7 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
 
             Init();
         }
-        
+
         private void Init()
         {
             if (String.IsNullOrEmpty(CacheTableName))
@@ -120,28 +120,23 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
                 try
                 {
                     _client.CreateTable(new CreateTableRequest
-                                                           {
-                                                               TableName = CacheTableName,
-                                                               KeySchema = new KeySchema
-                                                                               {
-                                                                                   HashKeyElement = new KeySchemaElement
-                                                                                                        {
-                                                                                                            AttributeName
-                                                                                                                =
-                                                                                                                KeyName,
-                                                                                                            AttributeType
-                                                                                                                = "S"
-                                                                                                        }
-                                                                               },
-                                                               ProvisionedThroughput = new ProvisionedThroughput
-                                                                                           {
-                                                                                               ReadCapacityUnits =
-                                                                                                   CacheReadCapacity,
-                                                                                               WriteCapacityUnits =
-                                                                                                   CacheWriteCapacity
-                                                                                           }
+                    {
+                        TableName = CacheTableName,
+                        KeySchema = new KeySchema
+                        {
+                            HashKeyElement = new KeySchemaElement
+                            {
+                                AttributeName = KeyName,
+                                AttributeType = "S"
+                            }
+                        },
+                        ProvisionedThroughput = new ProvisionedThroughput
+                        {
+                            ReadCapacityUnits = CacheReadCapacity,
+                            WriteCapacityUnits = CacheWriteCapacity,
+                        }
 
-                                                           });
+                    });
                     Log.InfoFormat("Successfully created DynamoDB table {0}", _cacheTableName);
                     WaitUntilTableReady(_cacheTableName);
                 }
@@ -228,7 +223,7 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
                 new GetItemRequest
                     {
                         TableName = CacheTableName,
-                        Key = new Key {HashKeyElement = new AttributeValue {S = key}}
+                        Key = new Key { HashKeyElement = new AttributeValue { S = key } }
                     }
                 );
             var item = response.GetItemResult.Item;
@@ -264,18 +259,18 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
             {
                 _client.PutItem(
                     new PutItemRequest
+                    {
+                        TableName = CacheTableName,
+                        Item = new Dictionary<string, AttributeValue>
                         {
-                            TableName = CacheTableName,
-                            Item = new Dictionary<string, AttributeValue>
-                                       {
-                                           {KeyName, new AttributeValue {S = key}},
-                                           {ValueName, new AttributeValue {S = value.ToJson()}},
-                                           {
-                                               ExpiresAtName,
-                                               new AttributeValue {S = expiresAt.ToUniversalTime().ToString(CultureInfo.InvariantCulture)}
-                                           }
-                                       }
+                            { KeyName, new AttributeValue {S = key } },
+                            { ValueName, new AttributeValue {S = value.ToJson()} },
+                            {
+                                ExpiresAtName,
+                                new AttributeValue {S = expiresAt.ToUniversalTime().ToString(CultureInfo.InvariantCulture)}
+                            }
                         }
+                    }
                     );
                 return true;
             }
@@ -288,26 +283,25 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
         private int UpdateCounter(string key, int value)
         {
             var response = _client.UpdateItem(new UpdateItemRequest
-                                                  {
-                                                      TableName = CacheTableName,
-                                                      Key = new Key {HashKeyElement = new AttributeValue {S = key}},
-                                                      AttributeUpdates = new Dictionary<string, AttributeValueUpdate>
-                                                                             {
-                                                                                 {
-                                                                                     ValueName,
-                                                                                     new AttributeValueUpdate
-                                                                                         {
-                                                                                             Action = "ADD",
-                                                                                             Value =
-                                                                                                 new AttributeValue
-                                                                                                     {
-                                                                                                         N =value.ToString(CultureInfo.InvariantCulture)
-                                                                                                     }
-                                                                                         }
-                                                                                 }
-                                                                             },
-                                                      ReturnValues = "ALL_NEW"
-                                                  });
+            {
+                TableName = CacheTableName,
+                Key = new Key { HashKeyElement = new AttributeValue { S = key } },
+                AttributeUpdates = new Dictionary<string, AttributeValueUpdate>
+                {
+                    {
+                        ValueName,
+                        new AttributeValueUpdate
+                        {
+                            Action = "ADD",
+                            Value = new AttributeValue
+                            {
+                                N =value.ToString(CultureInfo.InvariantCulture)
+                            }
+                        }
+                    }
+                },
+                ReturnValues = "ALL_NEW"
+            });
             return Convert.ToInt32(response.UpdateItemResult.Attributes[ValueName].N);
         }
 
@@ -328,7 +322,7 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
 
         public long Decrement(string key, uint amount)
         {
-            return UpdateCounter(key, (int) -amount);
+            return UpdateCounter(key, (int)-amount);
         }
 
         /// <summary>
@@ -338,7 +332,7 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
         public void FlushAll()
         {
             // Is this the cheapest method per AWS pricing to clear a table? (instead of table scan / remove each item) ??
-            _client.DeleteTable(new DeleteTableRequest {TableName = CacheTableName});
+            _client.DeleteTable(new DeleteTableRequest { TableName = CacheTableName });
             // Scaning the table is limited to 1 MB chunks, with a large cache it could result in many Read requests and many Delete requests occurring very quickly which may tap out 
             // the throughput capacity...
             WaitUntilTableDeleted(_cacheTableName);
@@ -364,7 +358,7 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
 
         public long Increment(string key, uint amount)
         {
-            return UpdateCounter(key, (int) amount);
+            return UpdateCounter(key, (int)amount);
         }
 
         public bool Remove(string key)
@@ -372,10 +366,10 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
             try
             {
                 _client.DeleteItem(new DeleteItemRequest
-                                       {
-                                           TableName = CacheTableName,
-                                           Key = new Key {HashKeyElement = new AttributeValue {S = key}}
-                                       });
+                {
+                    TableName = CacheTableName,
+                    Key = new Key { HashKeyElement = new AttributeValue { S = key } }
+                });
                 return true;
             }
             catch
@@ -401,37 +395,37 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
 
         public bool Replace<T>(string key, T value, TimeSpan expiresIn)
         {
-            return Set(key, value, DateTime.UtcNow.Add(expiresIn));            
+            return Set(key, value, DateTime.UtcNow.Add(expiresIn));
         }
 
         public bool Replace<T>(string key, T value, DateTime expiresAt)
         {
-            return Set(key, value, expiresAt.ToUniversalTime());            
+            return Set(key, value, expiresAt.ToUniversalTime());
         }
 
         public bool Replace<T>(string key, T value)
         {
-            return Set(key, value, DateTime.MaxValue.ToUniversalTime());            
+            return Set(key, value, DateTime.MaxValue.ToUniversalTime());
         }
 
         public bool Set<T>(string key, T value, TimeSpan expiresIn)
         {
-            return CacheSet(key, value, DateTime.UtcNow.Add(expiresIn));            
+            return CacheSet(key, value, DateTime.UtcNow.Add(expiresIn));
         }
 
         public bool Set<T>(string key, T value, DateTime expiresAt)
         {
-            return CacheSet(key, value, expiresAt.ToUniversalTime());            
+            return CacheSet(key, value, expiresAt.ToUniversalTime());
         }
 
         public bool Set<T>(string key, T value)
         {
-            return CacheSet(key, value, DateTime.MaxValue.ToUniversalTime());            
+            return CacheSet(key, value, DateTime.MaxValue.ToUniversalTime());
         }
 
         public void SetAll<T>(IDictionary<string, T> values)
         {
-            foreach(var entry in values)
+            foreach (var entry in values)
             {
                 Set(entry.Key, entry.Value);
             }
@@ -439,7 +433,7 @@ namespace ServiceStack.CacheAccess.AwsDynamoDb
 
         public void Dispose()
         {
-            if(_client != null)
+            if (_client != null)
             {
                 _client.Dispose();
             }

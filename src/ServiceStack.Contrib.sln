@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{21E2FAC5
 		..\NuGet\NuGetPack.cmd = ..\NuGet\NuGetPack.cmd
 		..\NuGet\ServiceStack.Authentication.MongoDB\servicestack.authentication.mongodb.nuspec = ..\NuGet\ServiceStack.Authentication.MongoDB\servicestack.authentication.mongodb.nuspec
 		..\NuGet\ServiceStack.Authentication.NHibernate\servicestack.authentication.nhibernate.nuspec = ..\NuGet\ServiceStack.Authentication.NHibernate\servicestack.authentication.nhibernate.nuspec
+		..\NuGet\ServiceStack.Authentication.RavenDb\servicestack.authentication.ravendb.nuspec = ..\NuGet\ServiceStack.Authentication.RavenDb\servicestack.authentication.ravendb.nuspec
 		..\NuGet\ServiceStack.Caching.AwsDynamoDb\servicestack.caching.awsdynamodb.nuspec = ..\NuGet\ServiceStack.Caching.AwsDynamoDb\servicestack.caching.awsdynamodb.nuspec
 		..\NuGet\ServiceStack.Caching.Azure\servicestack.caching.azure.nuspec = ..\NuGet\ServiceStack.Caching.Azure\servicestack.caching.azure.nuspec
 		..\NuGet\ServiceStack.Caching.Memcached\servicestack.caching.memcached.nuspec = ..\NuGet\ServiceStack.Caching.Memcached\servicestack.caching.memcached.nuspec

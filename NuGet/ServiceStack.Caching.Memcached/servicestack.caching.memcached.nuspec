@@ -2,18 +2,17 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>ServiceStack.Caching.Memcached</id> 
-    <version>3.9.34</version> 
+    <version>3.9.35</version> 
     <authors>Demis Bellot, Thomas Grassauer and ServiceStack contributors</authors> 
     <owners>Demis Bellot, Thomas Grassauer and ServiceStack contributors</owners>
     <description>
         An Memcached cache client implementing ServiceStack's ICacheClient:
         https://github.com/ServiceStack/ServiceStack/wiki/Caching
-        Which also supports InMemory, Redis and Azure cache providers.
     </description> 
     <projectUrl>https://github.com/ServiceStack/ServiceStack.OrmLite</projectUrl>
     <licenseUrl>https://github.com/ServiceStack/ServiceStack/blob/master/LICENSE</licenseUrl>
     <iconUrl>http://www.servicestack.net/logo-100x100.png</iconUrl>
-    <tags>ServiceStack Authentication Authorization NHibernate SQLServer Sqlite Oracle MySql PostgreSQL POCO Code-First</tags>
+    <tags>ServiceStack Caching Memcached Cache CacheClient POCO Code-First</tags>
     <language>en-US</language> 
     <copyright>ServiceStack 2013 and contributors</copyright>
     <dependencies>
