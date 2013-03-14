@@ -20,6 +20,7 @@ multiple datastore providers for long-term persistance of User Registration and 
   - Redis: `RedisClient`, `PooledRedisClientManager` and `BasicRedisClientManager` in [ServiceStack.Redis](https://nuget.org/packages/ServiceStack.Redis)
   - Memcached: `MemcachedClientCache` in [ServiceStack.Caching.Memcached](https://nuget.org/packages/ServiceStack.Caching.Memcached)
   - Azure: `AzureCacheClient` in [ServiceStack.Caching.Azure](https://nuget.org/packages/ServiceStack.Caching.Azure) - created by [Manuel Nelson](https://gist.github.com/manuelnelson)
+  - Amazon: `DynamoDbCacheClient` in [ServiceStack.CacheAccess.AwsDynamoDb](https://github.com/ServiceStack/ServiceStack.Contrib/tree/master/src/ServiceStack.CacheAccess.AwsDynamoDb) - created by [Mike Pugh](https://github.com/mikepugh)
 
 ### User Auth Repositories ([IUserAuthRepository](https://github.com/ServiceStack/ServiceStack/blob/master/src/ServiceStack.ServiceInterface/Auth/IUserAuthRepository.cs))
 
