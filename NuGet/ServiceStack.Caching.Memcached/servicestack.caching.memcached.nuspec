@@ -2,7 +2,7 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>ServiceStack.Caching.Memcached</id> 
-    <version>3.9.35</version> 
+    <version>3.9.36</version> 
     <authors>Demis Bellot, Thomas Grassauer and ServiceStack contributors</authors> 
     <owners>Demis Bellot, Thomas Grassauer and ServiceStack contributors</owners>
     <description>
@@ -17,7 +17,7 @@
     <copyright>ServiceStack 2013 and contributors</copyright>
     <dependencies>
       <dependency id="ServiceStack.Common" />
-      <dependency id="EnyimMemcached" />
+      <dependency id="EnyimMemcached" version="2.12.0" />
     </dependencies>
 </metadata>
 </package>
