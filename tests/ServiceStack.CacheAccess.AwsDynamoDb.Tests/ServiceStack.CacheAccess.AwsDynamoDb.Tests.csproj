@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AWSSDK">
-      <HintPath>..\..\src\packages\AWSSDK.1.5.12.0\lib\AWSSDK.dll</HintPath>
+      <HintPath>..\..\src\packages\AWSSDK.1.5.16.1\lib\AWSSDK.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\lib\tests\nunit.framework.dll</HintPath>

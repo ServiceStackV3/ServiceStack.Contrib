@@ -715,6 +715,22 @@
             </summary>
             <param name="instance"></param>
         </member>
+        <member name="M:Funq.Container.GenerateAutoWireFn``1">
+            <summary>
+            Generates a function which creates and auto-wires <see cref="!:TService"/>.
+            </summary>
+            <typeparam name="TService"></typeparam>
+            <param name="lambdaParam"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Funq.Container.AutoWire(Funq.Container,System.Object)">
+            <summary>
+            Auto-wires an existing instance of a specific type.
+            The auto-wiring progress is also cached to be faster 
+            when calling next time with the same type.
+            </summary>
+            <param name="instance"></param>
+        </member>
         <member name="P:Funq.Container.DefaultOwner">
             <summary>
 			Default owner for new registrations. <see cref="F:Funq.Owner.Container"/> by default.
@@ -2451,12 +2467,12 @@
             Otherwise uses Resolve approach, which will throw an exception if resolution fails
             </summary>
         </member>
-        <member name="M:ServiceStack.ServiceHost.Cookies.AddPermanentCookie(System.String,System.String)">
+        <member name="M:ServiceStack.ServiceHost.Cookies.AddPermanentCookie(System.String,System.String,System.Nullable{System.Boolean})">
             <summary>
             Sets a persistent cookie which never expires
             </summary>
         </member>
-        <member name="M:ServiceStack.ServiceHost.Cookies.AddSessionCookie(System.String,System.String)">
+        <member name="M:ServiceStack.ServiceHost.Cookies.AddSessionCookie(System.String,System.String,System.Nullable{System.Boolean})">
             <summary>
             Sets a session cookie which expires after the browser session closes
             </summary>
@@ -2524,6 +2540,15 @@
             <summary>
             Context to capture IService action
             </summary>
+        </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.AppHostExtensions.GetContainer(ServiceStack.WebHost.Endpoints.IAppHost)">
+            <summary>
+            Get an IAppHost container. 
+            Note: Registering dependencies should only be done during setup/configuration 
+            stage and remain immutable there after for thread-safety.
+            </summary>
+            <param name="appHost"></param>
+            <returns></returns>
         </member>
         <member name="M:ServiceStack.Markdown.MarkdownViewBase.GetHtmlHelper">
             <summary>
@@ -2642,22 +2667,6 @@
             <summary>
               Looks up a localized string similar to Unknown scope..
             </summary>
-        </member>
-        <member name="M:Funq.AutoWireHelpers.GenerateAutoWireFn``1">
-            <summary>
-            Generates a function which creates and auto-wires <see cref="!:TService"/>.
-            </summary>
-            <typeparam name="TService"></typeparam>
-            <param name="lambdaParam"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Funq.AutoWireHelpers.AutoWire(Funq.Container,System.Object)">
-            <summary>
-            Auto-wires an existing instance of a specific type.
-            The auto-wiring progress is also cached to be faster 
-            when calling next time with the same type.
-            </summary>
-            <param name="instance"></param>
         </member>
         <member name="M:ServiceStack.ServiceHost.HttpRequestExtensions.GetItemOrCookie(ServiceStack.ServiceHost.IHttpRequest,System.String)">
             <summary>
@@ -3498,6 +3507,11 @@
         <member name="P:ServiceStack.WebHost.Endpoints.EndpointHost.Container">
             <summary>
             The AppHost.Container. Note: it is not thread safe to register dependencies after AppStart.
+            </summary>
+        </member>
+        <member name="F:ServiceStack.WebHost.Endpoints.EndpointHostConfig.SkipRouteValidation">
+            <summary>
+            Use: \[Route\("[^\/]  regular expression to find violating routes in your sln
             </summary>
         </member>
     </members>
