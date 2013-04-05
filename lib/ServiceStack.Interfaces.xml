@@ -886,7 +886,7 @@
             Interface to redis pipeline
             </summary>
         </member>
-        <member name="P:ServiceStack.ServiceHost.Api.Description">
+        <member name="P:ServiceStack.ServiceHost.ApiAttribute.Description">
             <summary>
             The overall description of an API. Used by Swagger.
             </summary>
