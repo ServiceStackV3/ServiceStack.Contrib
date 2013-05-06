@@ -2,7 +2,7 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>ServiceStack.Authentication.RavenDB</id> 
-    <version>3.9.40</version> 
+    <version>3.9.44</version> 
     <authors>ServiceStack contributors</authors> 
     <owners>ServiceStack contributors</owners>
     <description>

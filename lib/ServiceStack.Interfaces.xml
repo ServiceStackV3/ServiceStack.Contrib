@@ -273,6 +273,11 @@
             Manages a connection to a persistance provider
             </summary>
         </member>
+        <member name="T:ServiceStack.DataAnnotations.MetaAttribute">
+            <summary>
+            Decorate any type or property with adhoc info
+            </summary>
+        </member>
         <member name="T:ServiceStack.Logging.ILog">
             <summary>
             Logs a message in a running application
@@ -1689,6 +1694,16 @@
             <summary>
             For multiple detailed validation errors.
             Can hold a specific error message for each named field.
+            </summary>
+        </member>
+        <member name="M:ServiceStack.Service.IPartialWriter.WritePartialTo(ServiceStack.ServiceHost.IHttpResponse)">
+            <summary>
+            Write a partial content result
+            </summary>
+        </member>
+        <member name="P:ServiceStack.Service.IPartialWriter.IsPartialRequest">
+            <summary>
+            Whether this HttpResult allows Partial Response
             </summary>
         </member>
         <member name="M:ServiceStack.Service.IReplyClient.Send``1(System.Object)">
