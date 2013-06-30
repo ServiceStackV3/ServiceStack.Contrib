@@ -137,6 +137,7 @@ namespace ServiceStack.Authentication.RavenDb
             using (var session = _documentStore.OpenSession())
             {
                 var userAuth = session.Query<ServiceStack_UserAuth_ByUserNameOrEmail.Result, ServiceStack_UserAuth_ByUserNameOrEmail>()
+                       .Customize(x => x.WaitForNonStaleResultsAsOfNow())
                        .Search(x => x.Search, userNameOrEmail)
                        .OfType<UserAuth>()
                        .FirstOrDefault();
@@ -247,6 +248,7 @@ namespace ServiceStack.Authentication.RavenDb
 			{
 				var id = int.Parse(userAuthId);
 				return session.Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow())
                     .Where(q => q.UserAuthId == id)
                     .OrderBy(x => x.ModifiedDate)
                     .OfType<UserOAuthProvider>()
@@ -274,6 +276,7 @@ namespace ServiceStack.Authentication.RavenDb
 			{
 			    var oAuthProvider = session
 			        .Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow())
 			        .Where(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId)
                     .OfType<UserOAuthProvider>()
 			        .FirstOrDefault();
@@ -295,6 +298,7 @@ namespace ServiceStack.Authentication.RavenDb
 			{
                 var oAuthProvider = session
                     .Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow())
                     .Where(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId)
                     .OfType<UserOAuthProvider>()
                     .FirstOrDefault();
