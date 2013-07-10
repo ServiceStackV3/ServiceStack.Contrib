@@ -57,29 +57,49 @@ namespace ServiceStack.CacheAccess.Memcached
 					ipEndpoints.Add(endpoint);
 				}
 			}
-			LoadClient(ipEndpoints);
+
+            LoadClient(PrepareMemcachedClientConfiguration(ipEndpoints));
 		}
 
         public MemcachedClientCache(IEnumerable<IPEndPoint> ipEndpoints)
 		{
-			LoadClient(ipEndpoints);
+            LoadClient(PrepareMemcachedClientConfiguration(ipEndpoints));
 		}
 
-		private void LoadClient(IEnumerable<IPEndPoint> ipEndpoints)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemcachedClientCache"/> class based on an existing <see cref="MemcachedClientConfiguration"/>.
+        /// </summary>
+        /// <param name="memcachedClientConfiguration">The <see cref="MemcachedClientConfiguration"/>.</param>
+        public MemcachedClientCache(MemcachedClientConfiguration memcachedClientConfiguration)
+        {
+            LoadClient(memcachedClientConfiguration);
+        }
+
+        /// <summary>
+        /// Prepares a MemcachedClientConfiguration based on the provided ipEndpoints.
+        /// </summary>
+        /// <param name="ipEndpoints">The ip endpoints.</param>
+        /// <returns></returns>
+	    private MemcachedClientConfiguration PrepareMemcachedClientConfiguration(IEnumerable<IPEndPoint> ipEndpoints)
+	    {
+            var config = new MemcachedClientConfiguration();
+            foreach (var ipEndpoint in ipEndpoints)
+            {
+                config.Servers.Add(ipEndpoint);
+            }
+
+            config.SocketPool.MinPoolSize = 10;
+            config.SocketPool.MaxPoolSize = 100;
+            config.SocketPool.ConnectionTimeout = new TimeSpan(0, 0, 10);
+            config.SocketPool.DeadTimeout = new TimeSpan(0, 2, 0);
+
+            return config;
+	    }
+
+		private void LoadClient(MemcachedClientConfiguration config)
 		{
             Enyim.Caching.LogManager.AssignFactory(new EnyimLogFactoryWrapper());
-
-			var config = new MemcachedClientConfiguration();
-			foreach (var ipEndpoint in ipEndpoints)
-			{
-				config.Servers.Add(ipEndpoint);
-			}
-
-			config.SocketPool.MinPoolSize = 10;
-			config.SocketPool.MaxPoolSize = 100;
-			config.SocketPool.ConnectionTimeout = new TimeSpan(0, 0, 10);
-			config.SocketPool.DeadTimeout = new TimeSpan(0, 2, 0);
-
+            
 			_client = new MemcachedClient(config);
 		}
 
@@ -107,7 +127,6 @@ namespace ServiceStack.CacheAccess.Memcached
 
 		public object Get(string key, out ulong ucas)
 		{
-			IDictionary<string, ulong> casValues;
 		    var result = _client.GetWithCas<MemcachedValueWrapper>(key);
 			if (result.Result != null)
 			{
