@@ -67,10 +67,10 @@ namespace ServiceStack.CacheAccess.Memcached
 		}
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemcachedClientCache"/> class based on an existing <see cref="MemcachedClientConfiguration"/>.
+        /// Initializes a new instance of the <see cref="MemcachedClientCache"/> class based on an existing <see cref="IMemcachedClientConfiguration"/>.
         /// </summary>
-        /// <param name="memcachedClientConfiguration">The <see cref="MemcachedClientConfiguration"/>.</param>
-        public MemcachedClientCache(MemcachedClientConfiguration memcachedClientConfiguration)
+        /// <param name="memcachedClientConfiguration">The <see cref="IMemcachedClientConfiguration"/>.</param>
+        public MemcachedClientCache(IMemcachedClientConfiguration memcachedClientConfiguration)
         {
             LoadClient(memcachedClientConfiguration);
         }
@@ -80,7 +80,7 @@ namespace ServiceStack.CacheAccess.Memcached
         /// </summary>
         /// <param name="ipEndpoints">The ip endpoints.</param>
         /// <returns></returns>
-	    private MemcachedClientConfiguration PrepareMemcachedClientConfiguration(IEnumerable<IPEndPoint> ipEndpoints)
+        private IMemcachedClientConfiguration PrepareMemcachedClientConfiguration(IEnumerable<IPEndPoint> ipEndpoints)
 	    {
             var config = new MemcachedClientConfiguration();
             foreach (var ipEndpoint in ipEndpoints)
@@ -96,7 +96,7 @@ namespace ServiceStack.CacheAccess.Memcached
             return config;
 	    }
 
-		private void LoadClient(MemcachedClientConfiguration config)
+		private void LoadClient(IMemcachedClientConfiguration config)
 		{
             Enyim.Caching.LogManager.AssignFactory(new EnyimLogFactoryWrapper());
             
