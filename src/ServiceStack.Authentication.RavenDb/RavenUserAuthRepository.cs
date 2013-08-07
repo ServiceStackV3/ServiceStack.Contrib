@@ -39,8 +39,14 @@ namespace ServiceStack.Authentication.RavenDb
 
 		private void ValidateNewUser(UserAuth newUser, string password)
 		{
-			newUser.ThrowIfNull("newUser");
 			password.ThrowIfNullOrEmpty("password");
+
+			ValidateNewUserWithoutPassword(newUser);
+		}
+
+		private void ValidateNewUserWithoutPassword(UserAuth newUser)
+		{
+			newUser.ThrowIfNull("newUser");
 
 			if (newUser.UserName.IsNullOrEmpty() && newUser.Email.IsNullOrEmpty())
 				throw new ArgumentNullException("UserName or Email is required");
@@ -96,9 +102,9 @@ namespace ServiceStack.Authentication.RavenDb
 			}
 		}
 
-		public UserAuth UpdateUserAuth(UserAuth existingUser, UserAuth newUser, string password)
+		public UserAuth UpdateUserAuth(UserAuth existingUser, UserAuth newUser, string password = null)
 		{
-			ValidateNewUser(newUser, password);
+			ValidateNewUserWithoutPassword(newUser);
 
 			AssertNoExistingUser(newUser, existingUser);
 
