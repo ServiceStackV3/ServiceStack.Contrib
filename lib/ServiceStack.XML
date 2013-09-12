@@ -2940,6 +2940,16 @@
             <param name="withPathInfoParts"></param>
             <returns></returns>
         </member>
+        <member name="M:ServiceStack.ServiceHost.RestPath.IsMatch(System.String,System.String[],System.Int32@)">
+            <summary>
+            For performance withPathInfoParts should already be a lower case string
+            to minimize redundant matching operations.
+            </summary>
+            <param name="httpMethod"></param>
+            <param name="withPathInfoParts"></param>
+            <param name="wildcardMatchCount"></param>
+            <returns></returns>
+        </member>
         <member name="P:ServiceStack.ServiceHost.RestPath.PathComponentsCount">
             <summary>
             The number of segments separated by '/' determinable by path.Split('/').Length
@@ -3137,7 +3147,7 @@
             inbound requests.
             </summary>
         </member>
-        <member name="M:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Start(System.String)">
+        <member name="M:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Start(System.String,System.Threading.WaitCallback)">
             <summary>
             Starts the Web Service
             </summary>
@@ -3173,19 +3183,15 @@
             <typeparam name="T">Type to be resolved.</typeparam>
             <returns>Instance of <typeparamref name="T"/>.</returns>
         </member>
+        <member name="M:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.AddUrlReservationToAcl(System.String)">
+            <summary>
+            Reserves the specified URL for non-administrator users and accounts. 
+            http://msdn.microsoft.com/en-us/library/windows/desktop/cc307223(v=vs.85).aspx
+            </summary>
+            <returns>Reserved Url if the process completes successfully</returns>
+        </member>
         <member name="P:ServiceStack.WebHost.Endpoints.Support.HttpListenerBase.Plugins">
             TODO: plugin added with .Add method after host initialization won't be configured. Each plugin should have state so we can invoke Register method if host was already started.  
-        </member>
-        <member name="M:ServiceStack.WebHost.Endpoints.AppHostHttpListenerLongRunningBase.Start(System.String)">
-            <summary>
-            Starts the Web Service
-            </summary>
-            <param name="urlBase">
-            A Uri that acts as the base that the server is listening on.
-            Format should be: http://127.0.0.1:8080/ or http://127.0.0.1:8080/somevirtual/
-            Note: the trailing slash is required! For more info see the
-            HttpListener.Prefixes property on MSDN.
-            </param>
         </member>
         <member name="M:ServiceStack.WebHost.Endpoints.AppHostHttpListenerLongRunningBase.ThreadPoolManager.Dispose">
             <summary>

@@ -20,6 +20,12 @@
             value actually used to create the publicKey</param>
             <returns></returns>
         </member>
+        <member name="M:ServiceStack.Common.CryptUtils.CreatePublicAndPrivateKeyPair">
+            <summary>
+            Create Public and Private Key Pair based on settings already in static class.
+            </summary>        
+            <returns>RsaKeyPair</returns>
+        </member>
         <member name="M:ServiceStack.Common.EnumExtensions.ToDescription(System.Enum)">
             <summary>
             Gets the textual description of the enum if it has one. e.g.
