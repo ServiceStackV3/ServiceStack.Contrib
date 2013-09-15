@@ -22,4 +22,8 @@
       <dependency id="mongocsharpdriver" />
     </dependencies> 
   </metadata> 
+  <files>
+    <file src="lib\**\*.*" target="lib" />
+    <file src="..\..\src\ServiceStack.Authentication.MongoDB\**\*.cs" target="src" />
+  </files>
 </package>
