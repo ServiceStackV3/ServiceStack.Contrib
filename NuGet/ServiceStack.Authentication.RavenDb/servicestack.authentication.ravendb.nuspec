@@ -22,4 +22,8 @@
       <dependency id="RavenDB.Client" />
     </dependencies> 
   </metadata> 
+  <files>
+    <file src="lib\**\*.*" target="lib" />
+    <file src="..\..\src\ServiceStack.Authentication.RavenDb\**\*.cs" target="src" />
+  </files>
 </package>

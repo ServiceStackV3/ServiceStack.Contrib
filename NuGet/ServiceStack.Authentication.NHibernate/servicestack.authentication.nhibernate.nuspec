@@ -23,5 +23,9 @@
       <dependency id="NHibernate" />
       <dependency id="FluentNHibernate" />
     </dependencies>
-</metadata>
+  </metadata>
+  <files>
+    <file src="lib\**\*.*" target="lib" />
+    <file src="..\..\src\ServiceStack.Authentication.NHibernate\**\*.cs" target="src" />
+  </files>
 </package>

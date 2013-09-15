@@ -19,5 +19,9 @@
       <dependency id="ServiceStack.Common" version="[3,4)" />
       <dependency id="WindowsAzure.Caching" />
     </dependencies>
-</metadata>
+  </metadata>
+  <files>
+    <file src="lib\**\*.*" target="lib" />
+    <file src="..\..\src\ServiceStack.CacheAccess.Azure\**\*.cs" target="src" />
+  </files>
 </package>
