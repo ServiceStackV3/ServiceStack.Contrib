@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Compression", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.CacheAccess.Memcached.Tests", "..\tests\ServiceStack.CacheAccess.Memcached.Tests\ServiceStack.CacheAccess.Memcached.Tests.csproj", "{3EEF88B9-14A0-466D-B364-24D5D0E9BE75}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{21E2FAC5-8CCD-4E23-962C-A44B07C1D5A1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{21E2FAC5-8CCD-4E23-962C-A44B07C1D5A1}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\build.bat = ..\build\build.bat
 		..\build\build.proj = ..\build\build.proj
