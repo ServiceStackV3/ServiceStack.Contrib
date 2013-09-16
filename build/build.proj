@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Default"
+    xmlns='http://schemas.microsoft.com/developer/msbuild/2003' ToolsVersion="4.0">
+  <Import Project="$(MSBuildProjectDirectory)/build.tasks" />
+
+  <PropertyGroup>
+    <MajorVersion Condition="$(MajorVersion) == ''">3</MajorVersion>
+    <MinorVersion Condition="$(MinorVersion) == ''">9</MinorVersion>
+    <PatchVersion Condition="$(PatchVersion) == ''">$(BUILD_NUMBER)</PatchVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BuildSolutionDir>$(MSBuildProjectDirectory)/..</BuildSolutionDir>
+    <SrcDir>$(BuildSolutionDir)/src</SrcDir>
+    <Configuration Condition="$(Configuration) == ''">Release</Configuration>
+    <NuGetPath>$(BuildSolutionDir)/src/.nuget/nuget.exe</NuGetPath>
+    <NuGetPackageDir>$(BuildSolutionDir)/NuGet/</NuGetPackageDir>
+    <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion).0</Version>
+    <UnstableTag Condition="$(RELEASE) == ''">-unstable</UnstableTag>
+    <PackageVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion)$(UnstableTag)</PackageVersion>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <NugetPackageFilesToDelete Include="$(NuGetPackageDir)/*.nupkg"/>
+  </ItemGroup>
+
+
+  <PropertyGroup>
+    <DoBuildSolutionsDependsOn>
+      BeforeBuildSolutions;
+      BuildSolutions
+    </DoBuildSolutionsDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <NugetPackageFilesToDelete Include="$(NuGetPackageDir)/*.nupkg"/>
+  </ItemGroup>
+
+  <Target Name="Default" DependsOnTargets="$(DoBuildSolutionsDependsOn)" />
+
+  <Target Name="TeamCityBuild">
+    <!--<Copy SourceFiles="$(BuildSolutionDir)/tests/ServiceStack.Common.Tests/ci.app.config" DestinationFiles="$(BuildSolutionDir)/tests/ServiceStack.Common.Tests/app.config" />-->
+    <CallTarget Targets="Default" />
+  </Target>
+
+  <Target Name="Default" DependsOnTargets="$(DoBuildSolutionsDependsOn)" />
+
+  <Target Name="BeforeBuildSolutions">
+    <Message Text="*****Before building solution*****" Importance="high"/>
+    <!--<Copy SourceFiles="Test/ci.app.config" DestinationFiles="Test/app.config" />-->
+  </Target>
+
+  <Target Name="UnitTestsWithoutIntegration" DependsOnTargets="$(DoBuildSolutionsDependsOn)">
+    <!--<Exec Command="$(BuildSolutionDir)/lib/tests/nunit-console-x86.exe /exclude:Integration $(BuildSolutionDir)/tests/ServiceStack.Redis.Tests/bin/Debug/ServiceStack.Redis.Tests.dll"/>-->
+  </Target>
+
+  <Target Name="UnitTests" DependsOnTargets="$(DoBuildSolutionsDependsOn)">
+    <!--<Exec Command="$(BuildSolutionDir)/lib/tests/nunit-console-x86.exe $(BuildSolutionDir)/tests/ServiceStack.Redis.Tests/bin/Debug/ServiceStack.Redis.Tests.dll"/>-->
+  </Target>
+
+  <Target Name="BuildSolutions">
+    <MSBuild Projects="$(BuildSolutionDir)/src/ServiceStack.Contrib.sln" Targets="Build"
+      Properties="Configuration=$(Configuration)" />
+  </Target>
+
+  <Target Name="NuGetPack">
+
+    <!-- Update Version -->
+    <ItemGroup>
+        <RegexTransform Include="$(SrcDir)/**/AssemblyInfo.cs">
+            <Find>\d+\.\d+\.\d+\.\d+</Find>
+            <ReplaceWith>$(Version)</ReplaceWith>
+        </RegexTransform>
+    </ItemGroup>
+
+    <RegexTransform Items="@(RegexTransform)" />
+
+    <Delete Files="@(NugetPackageFilesToDelete)" />
+
+    <ItemGroup>
+      <AuthenticationMongoDBFiles Include="$(SrcDir)/ServiceStack.Authentication.MongoDB/bin/$(Configuration)/ServiceStack.Authentication.MongoDB.*"></AuthenticationMongoDBFiles>
+
+      <AuthenticationNHibernateFiles Include="$(SrcDir)/ServiceStack.Authentication.NHibernate/bin/$(Configuration)/ServiceStack.Authentication.NHibernate.*"></AuthenticationNHibernateFiles>
+
+      <AuthenticationRavenDbFiles Include="$(SrcDir)/ServiceStack.Authentication.RavenDb/bin/$(Configuration)/ServiceStack.Authentication.RavenDb.*"></AuthenticationRavenDbFiles>
+
+      <CachingAwsDynamoDbFiles Include="$(SrcDir)/ServiceStack.CacheAccess.AwsDynamoDb/bin/$(Configuration)/ServiceStack.CacheAccess.AwsDynamoDb.*"></CachingAwsDynamoDbFiles>
+
+      <CachingAzureFiles Include="$(SrcDir)/ServiceStack.CacheAccess.Azure/bin/$(Configuration)/ServiceStack.CacheAccess.Azure.*"></CachingAzureFiles>
+
+      <CachingMemcachedFiles Include="$(SrcDir)/ServiceStack.CacheAccess.Memcached/bin/$(Configuration)/ServiceStack.CacheAccess.Memcached.*"></CachingMemcachedFiles>
+    </ItemGroup>
+
+    <!-- ServiceStack.Authentication.MongoDB -->
+
+    <MSBuild Projects="$(SrcDir)/ServiceStack.Authentication.MongoDB/ServiceStack.Authentication.MongoDB.csproj"
+             Targets="Build"
+             Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
+
+    <MakeDir Directories="$(NuGetPackageDir)/ServiceStack.Authentication.MongoDB/lib/net35" Condition="!Exists('$(NuGetPackageDir)/ServiceStack.Authentication.MongoDB/lib/net35')" />
+    <Copy SourceFiles="%(AuthenticationMongoDBFiles.Identity)" DestinationFolder="$(NuGetPackageDir)/ServiceStack.Authentication.MongoDB/lib/net35" />
+
+    <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Authentication.MongoDB/servicestack.authentication.mongodb.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
+            LogStandardErrorAsError="true" />
+
+    <!-- ServiceStack.Authentication.NHibernate -->
+
+    <MSBuild Projects="$(SrcDir)/ServiceStack.Authentication.NHibernate/ServiceStack.Authentication.NHibernate.csproj"
+             Targets="Build"
+             Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
+
+    <MakeDir Directories="$(NuGetPackageDir)/ServiceStack.Authentication.NHibernate/lib/net35" Condition="!Exists('$(NuGetPackageDir)/ServiceStack.Authentication.NHibernate/lib/net35')" />
+    <Copy SourceFiles="%(AuthenticationNHibernateFiles.Identity)" DestinationFolder="$(NuGetPackageDir)/ServiceStack.Authentication.NHibernate/lib/net35" />
+
+    <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Authentication.NHibernate/servicestack.authentication.nhibernate.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
+            LogStandardErrorAsError="true" />
+
+    <!-- ServiceStack.Authentication.RavenDb -->
+
+    <MSBuild Projects="$(SrcDir)/ServiceStack.Authentication.RavenDb/ServiceStack.Authentication.RavenDb.csproj"
+             Targets="Build"
+             Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
+
+    <MakeDir Directories="$(NuGetPackageDir)/ServiceStack.Authentication.RavenDb/lib/net40" Condition="!Exists('$(NuGetPackageDir)/ServiceStack.Authentication.RavenDb/lib/net40')" />
+    <Copy SourceFiles="%(AuthenticationRavenDbFiles.Identity)" DestinationFolder="$(NuGetPackageDir)/ServiceStack.Authentication.RavenDb/lib/net40" />
+
+    <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Authentication.RavenDb/servicestack.authentication.ravendb.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
+            LogStandardErrorAsError="true" />
+
+    <!-- ServiceStack.CacheAccess.AwsDynamoDb -->
+
+    <MSBuild Projects="$(SrcDir)/ServiceStack.CacheAccess.AwsDynamoDb/ServiceStack.CacheAccess.AwsDynamoDb.csproj"
+             Targets="Build"
+             Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
+
+    <MakeDir Directories="$(NuGetPackageDir)/ServiceStack.Caching.AwsDynamoDb/lib/net40" Condition="!Exists('$(NuGetPackageDir)/ServiceStack.Caching.AwsDynamoDb/lib/net40')" />
+    <Copy SourceFiles="%(CachingAwsDynamoDbFiles.Identity)" DestinationFolder="$(NuGetPackageDir)/ServiceStack.Caching.AwsDynamoDb/lib/net40" />
+
+    <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Caching.AwsDynamoDb/servicestack.caching.awsdynamodb.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
+            LogStandardErrorAsError="true" />
+
+    <!-- ServiceStack.CacheAccess.Azure -->
+
+    <MSBuild Projects="$(SrcDir)/ServiceStack.CacheAccess.Azure/ServiceStack.CacheAccess.Azure.csproj"
+             Targets="Build"
+             Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
+
+    <MakeDir Directories="$(NuGetPackageDir)/ServiceStack.Caching.Azure/lib/net40" Condition="!Exists('$(NuGetPackageDir)/ServiceStack.Caching.Azure/lib/net40')" />
+    <Copy SourceFiles="%(CachingAzureFiles.Identity)" DestinationFolder="$(NuGetPackageDir)/ServiceStack.Caching.Azure/lib/net40" />
+
+    <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Caching.Azure/servicestack.caching.azure.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
+            LogStandardErrorAsError="true" />
+
+    <!-- ServiceStack.CacheAccess.Memcached -->
+
+    <MSBuild Projects="$(SrcDir)/ServiceStack.CacheAccess.Memcached/ServiceStack.CacheAccess.Memcached.csproj"
+             Targets="Build"
+             Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
+
+    <MakeDir Directories="$(NuGetPackageDir)/ServiceStack.Caching.Memcached/lib/net35" Condition="!Exists('$(NuGetPackageDir)/ServiceStack.Caching.Memcached/lib/net35')" />
+    <Copy SourceFiles="%(CachingMemcachedFiles.Identity)" DestinationFolder="$(NuGetPackageDir)/ServiceStack.Caching.Memcached/lib/net35" />
+
+    <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Caching.Memcached/servicestack.caching.memcached.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
+            LogStandardErrorAsError="true" />
+
+  </Target>
+
+</Project>
