@@ -1,6 +1,8 @@
 bin/
 obj/
 .idea/
+latest/
+/env-vars.bat
 *.suo
 #ignore thumbnails created by windows
 Thumbs.db
@@ -8,6 +10,9 @@ Thumbs.db
 *.obj
 *.exe
 *.pdb
+*.pidb
+*.userprefs
+*.test-cache
 *.user
 *.aps
 *.pch
@@ -27,17 +32,19 @@ Thumbs.db
 *.lib
 *.sbr
 *.resharper.user
+*.dotCover
 obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
 App_Data/
+.DS_Store
 *.resharper.user
 *.suo
 *.user
-
-# NCrunch
-
-*.ncrunch*
-
-.*crunch*.local.xml
+NuGet/
+build/
+_NCrunch*/
+*.ncrunchproject
+*.ncrunchsolution
+*.xml
