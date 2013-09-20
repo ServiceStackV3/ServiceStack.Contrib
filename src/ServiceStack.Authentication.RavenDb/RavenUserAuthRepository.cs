@@ -207,9 +207,11 @@ namespace ServiceStack.Authentication.RavenDb
 
 		public UserAuth GetUserAuth(string userAuthId)
 		{
+			var id = int.Parse(userAuthId);
+
 			using (var session = _documentStore.OpenSession())
 			{
-				return session.Load<UserAuth>(userAuthId);
+				return session.Load<UserAuth>(id);
 			}
 		}
 
