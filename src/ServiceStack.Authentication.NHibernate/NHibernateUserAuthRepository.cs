@@ -259,7 +259,7 @@ namespace ServiceStack.Authentication.NHibernate
         {
             var userAuth = !authSession.UserAuthId.IsNullOrEmpty()
                 ? Session.Load<UserAuthPersistenceDto>(int.Parse(authSession.UserAuthId))
-                : authSession.TranslateTo<UserAuth>();
+                : authSession.ConvertTo<UserAuth>();
 
             if (userAuth.Id == default(int) && !authSession.UserAuthId.IsNullOrEmpty())
                 userAuth.Id = int.Parse(authSession.UserAuthId);

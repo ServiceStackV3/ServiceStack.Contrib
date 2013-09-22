@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using ServiceStack.CacheAccess;
+using ServiceStack.Caching;
 
 namespace ServiceStack.Compression
 {

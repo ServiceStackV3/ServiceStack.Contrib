@@ -85,11 +85,11 @@
 
       <AuthenticationRavenDbFiles Include="$(SrcDir)/ServiceStack.Authentication.RavenDb/bin/$(Configuration)/ServiceStack.Authentication.RavenDb.*"></AuthenticationRavenDbFiles>
 
-      <CachingAwsDynamoDbFiles Include="$(SrcDir)/ServiceStack.CacheAccess.AwsDynamoDb/bin/$(Configuration)/ServiceStack.CacheAccess.AwsDynamoDb.*"></CachingAwsDynamoDbFiles>
+      <CachingAwsDynamoDbFiles Include="$(SrcDir)/ServiceStack.Caching.AwsDynamoDb/bin/$(Configuration)/ServiceStack.Caching.AwsDynamoDb.*"></CachingAwsDynamoDbFiles>
 
-      <CachingAzureFiles Include="$(SrcDir)/ServiceStack.CacheAccess.Azure/bin/$(Configuration)/ServiceStack.CacheAccess.Azure.*"></CachingAzureFiles>
+      <CachingAzureFiles Include="$(SrcDir)/ServiceStack.Caching.Azure/bin/$(Configuration)/ServiceStack.Caching.Azure.*"></CachingAzureFiles>
 
-      <CachingMemcachedFiles Include="$(SrcDir)/ServiceStack.CacheAccess.Memcached/bin/$(Configuration)/ServiceStack.CacheAccess.Memcached.*"></CachingMemcachedFiles>
+      <CachingMemcachedFiles Include="$(SrcDir)/ServiceStack.Caching.Memcached/bin/$(Configuration)/ServiceStack.Caching.Memcached.*"></CachingMemcachedFiles>
     </ItemGroup>
 
     <!-- ServiceStack.Authentication.MongoDB -->
@@ -128,9 +128,9 @@
     <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Authentication.RavenDb/servicestack.authentication.ravendb.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
             LogStandardErrorAsError="true" />
 
-    <!-- ServiceStack.CacheAccess.AwsDynamoDb -->
+    <!-- ServiceStack.Caching.AwsDynamoDb -->
 
-    <MSBuild Projects="$(SrcDir)/ServiceStack.CacheAccess.AwsDynamoDb/ServiceStack.CacheAccess.AwsDynamoDb.csproj"
+    <MSBuild Projects="$(SrcDir)/ServiceStack.Caching.AwsDynamoDb/ServiceStack.Caching.AwsDynamoDb.csproj"
              Targets="Build"
              Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
 
@@ -140,9 +140,9 @@
     <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Caching.AwsDynamoDb/servicestack.caching.awsdynamodb.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
             LogStandardErrorAsError="true" />
 
-    <!-- ServiceStack.CacheAccess.Azure -->
+    <!-- ServiceStack.Caching.Azure -->
 
-    <MSBuild Projects="$(SrcDir)/ServiceStack.CacheAccess.Azure/ServiceStack.CacheAccess.Azure.csproj"
+    <MSBuild Projects="$(SrcDir)/ServiceStack.Caching.Azure/ServiceStack.Caching.Azure.csproj"
              Targets="Build"
              Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
 
@@ -152,9 +152,9 @@
     <Exec Command="&quot;$(NuGetPath)&quot; pack &quot;$(NuGetPackageDir)/ServiceStack.Caching.Azure/servicestack.caching.azure.nuspec&quot; -OutputDirectory &quot;$(NuGetPackageDir)&quot; -Version $(PackageVersion) -Symbols"
             LogStandardErrorAsError="true" />
 
-    <!-- ServiceStack.CacheAccess.Memcached -->
+    <!-- ServiceStack.Caching.Memcached -->
 
-    <MSBuild Projects="$(SrcDir)/ServiceStack.CacheAccess.Memcached/ServiceStack.CacheAccess.Memcached.csproj"
+    <MSBuild Projects="$(SrcDir)/ServiceStack.Caching.Memcached/ServiceStack.Caching.Memcached.csproj"
              Targets="Build"
              Properties="Version=$(PackageVersion);Configuration=$(Configuration)" />
 

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.GZip;
-using ServiceStack.CacheAccess;
+using ServiceStack.Caching;
 
 namespace ServiceStack.Compression
 {

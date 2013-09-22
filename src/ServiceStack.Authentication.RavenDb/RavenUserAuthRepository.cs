@@ -224,7 +224,7 @@ namespace ServiceStack.Authentication.RavenDb
 
 				var userAuth = !authSession.UserAuthId.IsNullOrEmpty()
 					               ? session.Load<UserAuth>(idInt)
-					               : authSession.TranslateTo<UserAuth>();
+                                   : authSession.ConvertTo<UserAuth>();
 
 				if (userAuth.Id == default(int) && !authSession.UserAuthId.IsNullOrEmpty())
 					userAuth.Id = idInt;
