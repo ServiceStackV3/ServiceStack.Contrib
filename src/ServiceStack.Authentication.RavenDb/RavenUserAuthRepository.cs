@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition.Hosting;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Raven.Client;
+using Raven.Client.Indexes;
 using ServiceStack.Common;
 using ServiceStack.ServiceInterface.Auth;
 using ServiceStack.Text;
@@ -16,25 +18,25 @@ namespace ServiceStack.Authentication.RavenDb
 		public Regex ValidUserNameRegEx = new Regex(@"^(?=.{3,15}$)([A-Za-z0-9][._-]?)*$", RegexOptions.Compiled);
 
 		private readonly IDocumentStore _documentStore;
+        //Session object is created somewhere else and injected here
+        private readonly IDocumentSession _session;
 	    private static bool _isInitialized = false;
 
-        public static void CreateOrUpdateUserAuthIndex(IDocumentStore store)
+        //Change to allow for Multi- Tenancy cases
+        //User has to call this method every time he creates a new tenant DB
+        public static void CreateOrUpdateUserAuthIndex(IDocumentStore store,string databaseName)
         {
             // put this index into the ravendb database
-            new ServiceStack_UserAuth_ByUserNameOrEmail().Execute(store);
-            new ServiceStack_UserAuth_ByOAuthProvider().Execute(store);
+            var catalog = new CompositionContainer(new AssemblyCatalog(typeof(ServiceStack_UserAuth_ByUserNameOrEmail).Assembly));
+            IndexCreation.CreateIndexes(catalog, store.DatabaseCommands.ForDatabase(databaseName), store.Conventions);
             _isInitialized = true;
         }
 
-		public RavenUserAuthRepository(IDocumentStore documentStore)
+		public RavenUserAuthRepository(IDocumentStore documentStore,IDocumentSession session)
 		{
 			_documentStore = documentStore;
-         
-            // if the user didn't call this method in their AppHostBase
-            // Let's call if for them. No worries if this is called a few
-            // times, we just don't want it running all the time
-            if (!_isInitialized) 
-                CreateOrUpdateUserAuthIndex(documentStore);
+		    _session = session;
+
 		}
 
 		private void ValidateNewUser(UserAuth newUser, string password)
@@ -75,10 +77,10 @@ namespace ServiceStack.Authentication.RavenDb
 			newUser.CreatedDate = DateTime.UtcNow;
 			newUser.ModifiedDate = newUser.CreatedDate;
 
-			using (var session = _documentStore.OpenSession())
+			using (_session)
 			{
-				session.Store(newUser);
-				session.SaveChanges();
+				_session.Store(newUser);
+				_session.SaveChanges();
 			}
 
 			return newUser;
@@ -129,10 +131,10 @@ namespace ServiceStack.Authentication.RavenDb
 			newUser.CreatedDate = existingUser.CreatedDate;
 			newUser.ModifiedDate = DateTime.UtcNow;
 
-			using (var session = _documentStore.OpenSession())
+			using (_session)
 			{
-				session.Store(newUser);
-				session.SaveChanges();
+                _session.Store(newUser);
+                _session.SaveChanges();
 			}
 
 			return newUser;
@@ -140,9 +142,9 @@ namespace ServiceStack.Authentication.RavenDb
 
 		public UserAuth GetUserAuthByUserName(string userNameOrEmail)
 		{
-            using (var session = _documentStore.OpenSession())
+            using (_session)
             {
-                var userAuth = session.Query<ServiceStack_UserAuth_ByUserNameOrEmail.Result, ServiceStack_UserAuth_ByUserNameOrEmail>()
+                var userAuth = _session.Query<ServiceStack_UserAuth_ByUserNameOrEmail.Result, ServiceStack_UserAuth_ByUserNameOrEmail>()
                        .Customize(x => x.WaitForNonStaleResultsAsOfNow())
                        .Search(x => x.Search, userNameOrEmail)
                        .OfType<UserAuth>()
@@ -218,12 +220,12 @@ namespace ServiceStack.Authentication.RavenDb
 
 		public void SaveUserAuth(IAuthSession authSession)
 		{
-			using (var session = _documentStore.OpenSession())
+            using (_session)
 			{
 				int idInt = int.Parse(authSession.UserAuthId);
 
 				var userAuth = !authSession.UserAuthId.IsNullOrEmpty()
-					               ? session.Load<UserAuth>(idInt)
+                                   ? _session.Load<UserAuth>(idInt)
                                    : authSession.ConvertTo<UserAuth>();
 
 				if (userAuth.Id == default(int) && !authSession.UserAuthId.IsNullOrEmpty())
@@ -233,30 +235,30 @@ namespace ServiceStack.Authentication.RavenDb
 				if (userAuth.CreatedDate == default(DateTime))
 					userAuth.CreatedDate = userAuth.ModifiedDate;
 
-				session.Store(userAuth);
-				session.SaveChanges();
+                _session.Store(userAuth);
+                _session.SaveChanges();
 			}
 		}
 
 		public void SaveUserAuth(UserAuth userAuth)
 		{
-			using (var session = _documentStore.OpenSession())
+            using (_session)
 			{
 				userAuth.ModifiedDate = DateTime.UtcNow;
 				if (userAuth.CreatedDate == default(DateTime))
 					userAuth.CreatedDate = userAuth.ModifiedDate;
 
-				session.Store(userAuth);
-				session.SaveChanges();
+                _session.Store(userAuth);
+                _session.SaveChanges();
 			}
 		}
 
 		public List<UserOAuthProvider> GetUserOAuthProviders(string userAuthId)
 		{
-			using (var session = _documentStore.OpenSession())
+            using (_session)
 			{
 				var id = int.Parse(userAuthId);
-				return session.Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
+                return _session.Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow())
                     .Where(q => q.UserAuthId == id)
                     .OrderBy(x => x.ModifiedDate)
@@ -281,9 +283,9 @@ namespace ServiceStack.Authentication.RavenDb
 			if (tokens == null || tokens.Provider.IsNullOrEmpty() || tokens.UserId.IsNullOrEmpty())
 				return null;
 
-			using (var session = _documentStore.OpenSession())
+            using (_session)
 			{
-			    var oAuthProvider = session
+                var oAuthProvider = _session
 			        .Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow())
 			        .Where(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId)
@@ -292,7 +294,7 @@ namespace ServiceStack.Authentication.RavenDb
 
 				if (oAuthProvider != null)
 				{
-					var userAuth = session.Load<UserAuth>(oAuthProvider.UserAuthId);
+                    var userAuth = _session.Load<UserAuth>(oAuthProvider.UserAuthId);
 					return userAuth;
 				}
 				return null;
@@ -303,9 +305,9 @@ namespace ServiceStack.Authentication.RavenDb
 		{
 			var userAuth = GetUserAuth(authSession, tokens) ?? new UserAuth();
 
-			using (var session = _documentStore.OpenSession())
+            using (_session)
 			{
-                var oAuthProvider = session
+                var oAuthProvider = _session
                     .Query<ServiceStack_UserAuth_ByOAuthProvider.Result, ServiceStack_UserAuth_ByOAuthProvider>()
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow())
                     .Where(q => q.Provider == tokens.Provider && q.UserId == tokens.UserId)
@@ -328,8 +330,8 @@ namespace ServiceStack.Authentication.RavenDb
 				if (userAuth.CreatedDate == default(DateTime))
 					userAuth.CreatedDate = userAuth.ModifiedDate;
 
-				session.Store(userAuth);
-				session.SaveChanges();
+                _session.Store(userAuth);
+                _session.SaveChanges();
 
 				oAuthProvider.UserAuthId = userAuth.Id;
 
@@ -337,8 +339,8 @@ namespace ServiceStack.Authentication.RavenDb
 					oAuthProvider.CreatedDate = userAuth.ModifiedDate;
 				oAuthProvider.ModifiedDate = userAuth.ModifiedDate;
 
-				session.Store(oAuthProvider);
-				session.SaveChanges();
+                _session.Store(oAuthProvider);
+                _session.SaveChanges();
 
 				return oAuthProvider.UserAuthId.ToString(CultureInfo.InvariantCulture);
 			}
