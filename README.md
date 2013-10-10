@@ -1,4 +1,8 @@
-# High-level ServiceStack features and extensions contributed by the community
+# The latest Contrib projects have now been merged into the main [ServiceStack](https://github.com/ServiceStack/ServiceStack/) repo.
+
+----
+
+## High-level ServiceStack features and extensions contributed by the community
 
 Although ServiceStack is an opinionated web service framework (i.e. includes most components required to make high-performance web services), each feature is built around pure/clean, dependency-free 
 C# interfaces enabling the use of alternate, pluggable, xml/config-free and testable C# components.
