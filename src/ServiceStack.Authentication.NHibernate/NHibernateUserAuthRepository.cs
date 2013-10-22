@@ -115,7 +115,7 @@ namespace ServiceStack.Authentication.NHibernate
             if (userAuth == null) return false;
 
             var digestHelper = new DigestAuthFunctions();
-            return digestHelper.ValidateResponse(digestHeaders, privateKey, nonceTimeOut, userAuth.DigestHA1Hash, sequence);
+            return digestHelper.ValidateResponse(digestHeaders, privateKey, nonceTimeOut, userAuth.DigestHa1Hash, sequence);
         }
 
         public UserAuth GetUserAuthByUserName(string userNameOrEmail)

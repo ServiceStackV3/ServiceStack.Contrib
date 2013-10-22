@@ -71,7 +71,7 @@ namespace ServiceStack.Authentication.RavenDb
 			string hash;
 			saltedHash.GetHashAndSaltString(password, out hash, out salt);
 			var digestHelper = new DigestAuthFunctions();
-			newUser.DigestHA1Hash = digestHelper.CreateHa1(newUser.UserName, DigestAuthProvider.Realm, password);
+			newUser.DigestHa1Hash = digestHelper.CreateHa1(newUser.UserName, DigestAuthProvider.Realm, password);
 			newUser.PasswordHash = hash;
 			newUser.Salt = salt;
 			newUser.CreatedDate = DateTime.UtcNow;
@@ -118,7 +118,7 @@ namespace ServiceStack.Authentication.RavenDb
 				saltedHash.GetHashAndSaltString(password, out hash, out salt);
 			}
 			// If either one changes the digest hash has to be recalculated
-			var digestHash = existingUser.DigestHA1Hash;
+			var digestHash = existingUser.DigestHa1Hash;
 			if (password != null || existingUser.UserName != newUser.UserName)
 			{
 				var digestHelper = new DigestAuthFunctions();
@@ -127,7 +127,7 @@ namespace ServiceStack.Authentication.RavenDb
 			newUser.Id = existingUser.Id;
 			newUser.PasswordHash = hash;
 			newUser.Salt = salt;
-			newUser.DigestHA1Hash = digestHash;
+			newUser.DigestHa1Hash = digestHash;
 			newUser.CreatedDate = existingUser.CreatedDate;
 			newUser.ModifiedDate = DateTime.UtcNow;
 
@@ -177,7 +177,7 @@ namespace ServiceStack.Authentication.RavenDb
 			if (userAuth == null) return false;
 
 			var digestHelper = new DigestAuthFunctions();
-			if (digestHelper.ValidateResponse(digestHeaders, PrivateKey, NonceTimeOut, userAuth.DigestHA1Hash, sequence))
+			if (digestHelper.ValidateResponse(digestHeaders, PrivateKey, NonceTimeOut, userAuth.DigestHa1Hash, sequence))
 			{
 				return true;
 			}
