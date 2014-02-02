@@ -53,7 +53,7 @@ namespace ServiceStack.Authentication.NHibernate
             if (tokens == null || tokens.Provider.IsNullOrEmpty() || tokens.UserId.IsNullOrEmpty())
                 return null;
 
-            var oAuthProvider = Session.QueryOver<UserOAuthProvider>()
+            var oAuthProvider = Session.QueryOver<UserOAuthProviderPersistenceDto>()
                 .Where(x => x.Provider == tokens.Provider)
                 .And(x => x.UserId == tokens.UserId)
                 .SingleOrDefault();
@@ -141,14 +141,15 @@ namespace ServiceStack.Authentication.NHibernate
         {
             var userAuth = GetUserAuth(authSession, tokens) ?? new UserAuth();
 
-            var oAuthProvider = Session.QueryOver<UserOAuthProvider>()
+            var oAuthProvider = Session.QueryOver<UserOAuthProviderPersistenceDto>()
                 .Where(x => x.Provider == tokens.Provider)
                 .And(x => x.UserId == tokens.UserId)
                 .SingleOrDefault();
 
             if (oAuthProvider == null)
             {
-                oAuthProvider = new UserOAuthProvider {
+                oAuthProvider = new UserOAuthProviderPersistenceDto
+                {
                     Provider = tokens.Provider,
                     UserId = tokens.UserId,
                 };
@@ -177,7 +178,7 @@ namespace ServiceStack.Authentication.NHibernate
         public List<UserOAuthProvider> GetUserOAuthProviders(string userAuthId)
         {
             int authId = int.Parse(userAuthId);
-            var value = Session.QueryOver<UserOAuthProvider>()
+            var value = Session.QueryOver<UserOAuthProviderPersistenceDto>()
                 .Where(x => x.UserAuthId == authId)
                 .OrderBy(x => x.ModifiedDate).Asc
                 .List();
