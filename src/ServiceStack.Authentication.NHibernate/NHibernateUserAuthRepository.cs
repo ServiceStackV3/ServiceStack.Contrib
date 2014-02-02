@@ -139,7 +139,7 @@ namespace ServiceStack.Authentication.NHibernate
 
         public string CreateOrMergeAuthSession(IAuthSession authSession, IOAuthTokens tokens)
         {
-            var userAuth = GetUserAuth(authSession, tokens) ?? new UserAuth();
+            var userAuth = GetUserAuth(authSession, tokens) ?? new UserAuthPersistenceDto();
 
             var oAuthProvider = Session.QueryOver<UserOAuthProviderPersistenceDto>()
                 .Where(x => x.Provider == tokens.Provider)
@@ -162,7 +162,7 @@ namespace ServiceStack.Authentication.NHibernate
             if (userAuth.CreatedDate == default(DateTime))
                 userAuth.CreatedDate = userAuth.ModifiedDate;
 
-            Session.Save(new UserAuthPersistenceDto(userAuth));
+            Session.Save(userAuth);
 
             oAuthProvider.UserAuthId = userAuth.Id;
 
